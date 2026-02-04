@@ -178,7 +178,7 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item" href="/profile"><i class="bi bi-pencil-square me-2"></i> Edit Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                            <li><a class="dropdown-item text-danger" href="/login"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
                         </ul>
                     </li>
                 </ul>
