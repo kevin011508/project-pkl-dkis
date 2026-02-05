@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AgendaController;
 
+
 // ROUTE AGENDA
 Route::prefix('agenda')->name('agenda.')->group(function () {
     // INDEX - Daftar Agenda
@@ -25,13 +26,24 @@ Route::prefix('agenda')->name('agenda.')->group(function () {
     
     // DELETE - Hapus Data
     Route::delete('/{id}', [AgendaController::class, 'destroy'])->name('destroy');
-    
+
     // ===== TAMBAHKAN INI =====
     // EXPORT REKAP - Export Data
     Route::get('/export/rekap', [AgendaController::class, 'exportRekap'])->name('export-rekap');
     // ========================
-});
+    });
+    
+        // RESTORE - Kembalikan Data Terhapus
+        Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])
+        ->name('agenda.restore');
 
+    // TRASH - Daftar Data Terhapus
+    Route::get('/agenda-trash', [AgendaController::class, 'trash'])
+    ->name('agenda.trash');
+    Route::resource('agenda', AgendaController::class);
+
+
+    
 // ROUTE LAINNYA
 Route::get('/', function () {
     return view('index');

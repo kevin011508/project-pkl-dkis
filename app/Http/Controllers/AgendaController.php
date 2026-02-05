@@ -172,19 +172,29 @@ class AgendaController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($id)
-    {
-        $agenda = Agenda::findOrFail($id);
-        
-        // Hapus file lampiran jika ada
-        if ($agenda->lampiran) {
-            Storage::disk('public')->delete($agenda->lampiran);
-        }
+{
+    $agenda = Agenda::findOrFail($id);
+    $agenda->delete(); // INI SOFT DELETE
+    return redirect()->route('agenda.index')
+        ->with('success', 'Agenda berhasil dihapus');
+}
+        //untuk restore data yang dihapus
+   public function restore($id)
+{
+    $agenda = Agenda::withTrashed()->findOrFail($id);
+    $agenda->restore();
 
-        $agenda->delete();
+    return redirect()->route('agenda.trash')
+        ->with('success', 'Agenda berhasil direstore');
+}
 
-        return redirect()->route('agenda.index')
-            ->with('success', 'Agenda berhasil dihapus.');
-    }
+    //trash
+public function trash()
+{
+    $agendas = Agenda::onlyTrashed()->paginate(10);
+    return view('agenda.trash', compact('agendas'));
+}
+
 
     /**
      * Export rekap agenda

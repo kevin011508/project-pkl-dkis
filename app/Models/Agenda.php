@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Agenda extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'nama_agenda',
@@ -30,4 +32,9 @@ class Agenda extends Model
         'tanggal_selesai' => 'datetime',
         'status_selesai' => 'boolean',
     ];
+
+     protected $dates = ['deleted_at', 'tanggal_mulai'];
 }
+
+ 
+
