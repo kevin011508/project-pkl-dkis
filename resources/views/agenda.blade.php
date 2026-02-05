@@ -115,7 +115,7 @@
                                 <a href="{{ route('agenda.show', $agenda->id) }}" class="btn btn-primary btn-sm">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="{{ route('agenda.edit', $agenda->id) }}" class="btn btn-warning btn-sm">
+                                <a href="{{ route('agenda.edit', $agenda->id) }}" class="btn btn-warning">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <form action="{{ route('agenda.destroy', $agenda->id) }}"
