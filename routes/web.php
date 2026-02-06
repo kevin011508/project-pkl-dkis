@@ -37,6 +37,7 @@ Route::prefix('agenda')->name('agenda.')->group(function () {
         Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])
         ->name('agenda.restore');
 
+
     // TRASH - Daftar Data Terhapus
     Route::get('/agenda-trash', [AgendaController::class, 'trash'])
     ->name('agenda.trash');
@@ -44,6 +45,19 @@ Route::prefix('agenda')->name('agenda.')->group(function () {
 
 
     
+
+Route::get('/dashboard', function () {
+    return view('agenda');
+})->name('dashboard');
+
+
+
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/rekap', [RekapController::class, 'index'])->name('rekap.index');
+Route::post('/rekap', [RekapController::class, 'filter'])->name('rekap.filter');
+Route::post('/rekap', [AgendaController::class, 'rekap'])
+    ->name('rekap');
+
 // ROUTE LAINNYA
 Route::get('/', function () {
     return view('index');

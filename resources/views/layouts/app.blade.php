@@ -330,6 +330,7 @@
         }
     </style>
     @stack('styles')
+
 </head>
 <body>
     <!-- Navbar -->
@@ -353,6 +354,7 @@
             </div>
             
             <a href="{{ route('index') }}" class="{{ request()->routeIs('index') ? 'active' : '' }}">
+
                 <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
             </a>
 <!-- Di sidebar -->
@@ -436,4 +438,4 @@
     </script>
     @stack('scripts')
 </body>
-</html>
+</html> 

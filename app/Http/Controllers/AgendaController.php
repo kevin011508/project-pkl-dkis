@@ -216,7 +216,7 @@ public function trash()
 
         $agendas = $query->get();
 
-        return view('agenda.rekap', compact('agendas', 'startDate', 'endDate'));
+        return view('layouts.rekap', compact('agendas', 'startDate', 'endDate'));
     }
 
     /**
@@ -239,5 +239,12 @@ public function trash()
         }
 
         return 'belum';
+        
     }
+    public function show($id)
+{
+    $agenda = Agenda::findOrFail($id);
+    return view('layouts.show', compact('agenda'));
+}
+
 }
