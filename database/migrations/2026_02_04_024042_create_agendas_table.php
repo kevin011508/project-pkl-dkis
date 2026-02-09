@@ -26,6 +26,7 @@ return new class extends Migration
             $table->enum('sifat_agenda', ['publik', 'privat']);
             $table->string('status')->default('belum');
             $table->string('lampiran')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -234,19 +234,7 @@
         </div>
     </div>
 
-    <!-- Preview Section (Optional) -->
-    <div class="card shadow-sm border-0 mt-4">
-        <div class="card-header bg-light">
-            <h6 class="mb-0"><i class="bi bi-eye me-2"></i> Preview</h6>
-        </div>
-        <div class="card-body">
-            <p class="text-muted mb-0">
-                Setelah diisi, form akan menghasilkan agenda baru yang dapat dilihat di halaman daftar agenda.
-                Pastikan semua informasi yang dimasukkan sudah benar sebelum disimpan.
-            </p>
-        </div>
-    </div>
-</div>
+  
 
 <!-- JavaScript untuk Preview Real-time (Optional) -->
 <script>
