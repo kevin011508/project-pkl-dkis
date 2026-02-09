@@ -2,44 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AgendaController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ManagementController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\OrganizationController;
 
-// Dashboard dan Authentication
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
-// Agenda Routes
-Route::prefix('agenda')->name('agenda.')->group(function () {
-    Route::get('/', [AgendaController::class, 'index'])->name('index');
-    Route::get('/create', [AgendaController::class, 'create'])->name('create');
-    Route::post('/', [AgendaController::class, 'store'])->name('store');
-    Route::get('/{agenda}', [AgendaController::class, 'show'])->name('show');
-    Route::get('/{agenda}/edit', [AgendaController::class, 'edit'])->name('edit');
-    Route::put('/{agenda}', [AgendaController::class, 'update'])->name('update');
-    Route::delete('/{agenda}', [AgendaController::class, 'destroy'])->name('destroy');
-});
-
-// Management Routes
-Route::prefix('management')->name('management.')->group(function () {
-    Route::get('/', [ManagementController::class, 'index'])->name('index');
-    // Tambahan route untuk manajemen lainnya
-});
-
-// Resource Routes
-Route::resource('users', UserController::class);
-Route::resource('organizations', OrganizationController::class);
-
-// Settings
-Route::get('/settings', function () {
-    return view('settings.index');
-})->name('settings');
-
-// Display Mode
-Route::get('/display', function () {
-    return view('display.index');
-})->name('display');
 
 // ROUTE AGENDA
 Route::prefix('agenda')->name('agenda.')->group(function () {
