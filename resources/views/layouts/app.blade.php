@@ -340,7 +340,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <a class="navbar-brand" href="{{ route('index') }}">
+            <a class="navbar-brand" href="{{ route('agenda.index') }}">
                 <i class="bi bi-graph-up me-2"></i>ISUN
             </a>
         </div>
@@ -353,10 +353,12 @@
                 <h5 class="sidebar-title">Menu Utama</h5>
             </div>
             
-            <a href="{{ route('index') }}" class="{{ request()->routeIs('index') ? 'active' : '' }}">
+           <a href="{{ route('dashboard') }}"
+   class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+   <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+</a>
 
-                <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
-            </a>
+             
 <!-- Di sidebar -->
 <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">
     <i class="bi bi-calendar-check"></i> <span>Agenda</span>

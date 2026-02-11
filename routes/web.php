@@ -2,72 +2,73 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AgendaController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RekapController;
+use App\Http\Controllers\ManajemenController;
 
+/*
+|--------------------------------------------------------------------------
+| MANAJEMEN
+|--------------------------------------------------------------------------
+*/
+Route::prefix('manajemen')->name('manajemen.')->group(function () {
 
-// ROUTE AGENDA
-Route::prefix('agenda')->name('agenda.')->group(function () {
-    // INDEX - Daftar Agenda
-    Route::get('/', [AgendaController::class, 'index'])->name('index');
-    
-    // CREATE - Form Tambah
-    Route::get('/create', [AgendaController::class, 'create'])->name('create');
-    
-    // STORE - Simpan Data
-    Route::post('/', [AgendaController::class, 'store'])->name('store');
-    
-    // SHOW - Detail Agenda
-    Route::get('/{id}', [AgendaController::class, 'show'])->name('show');
-    
-    // EDIT - Form Edit
-    Route::get('/{id}/edit', [AgendaController::class, 'edit'])->name('edit');
-    
-    // UPDATE - Update Data
-    Route::put('/{id}', [AgendaController::class, 'update'])->name('update');
-    
-    // DELETE - Hapus Data
-    Route::delete('/{id}', [AgendaController::class, 'destroy'])->name('destroy');
+    // Dashboard Manajemen
+    Route::get('/', [ManajemenController::class, 'index'])
+        ->name('dashboard');
 
-    // ===== TAMBAHKAN INI =====
-    // EXPORT REKAP - Export Data
-    Route::get('/export/rekap', [AgendaController::class, 'exportRekap'])->name('export-rekap');
-    // ========================
-    });
-    
-        // RESTORE - Kembalikan Data Terhapus
-        Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])
-        ->name('agenda.restore');
+    // User
+    Route::get('/user', [ManajemenController::class, 'user'])
+        ->name('user');
 
+    // Organisasi
+    Route::get('/organisasi', [ManajemenController::class, 'organisasi'])
+        ->name('organisasi');
 
-    // TRASH - Daftar Data Terhapus
-    Route::get('/agenda-trash', [AgendaController::class, 'trash'])
-    ->name('agenda.trash');
-    Route::resource('agenda', AgendaController::class);
+    // Pengaturan
+    Route::get('/pengaturan', [ManajemenController::class, 'pengaturan'])
+        ->name('pengaturan');
+});
 
-
-    
-
-Route::get('/dashboard', function () {
-    return view('agenda');
-})->name('dashboard');
-
-
-
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD
+|--------------------------------------------------------------------------
+*/
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/rekap', [RekapController::class, 'index'])->name('rekap.index');
-Route::post('/rekap', [RekapController::class, 'filter'])->name('rekap.filter');
-Route::post('/rekap', [AgendaController::class, 'rekap'])
-    ->name('rekap');
 
-// ROUTE LAINNYA
-Route::get('/', function () {
-    return view('index');
-})->name('index');
+/*
+|--------------------------------------------------------------------------
+| AGENDA
+|--------------------------------------------------------------------------
+*/
+Route::resource('agenda', AgendaController::class);
 
-Route::get('/login', function () {
-    return view('login');
-});
+/* tambahan agenda (di luar resource) */
+Route::get('/agenda-trash', [AgendaController::class, 'trash'])
+    ->name('agenda.trash');
 
-Route::get('/profile', function () {
-    return view('profile');
-});
+Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])
+    ->name('agenda.restore');
 
+Route::get('/agenda/export/rekap', [AgendaController::class, 'exportRekap'])
+    ->name('agenda.export-rekap');
+
+/*
+|--------------------------------------------------------------------------
+| REKAP
+|--------------------------------------------------------------------------
+*/
+Route::get('/rekap', [RekapController::class, 'index'])
+    ->name('rekap.index');
+
+Route::post('/rekap/filter', [RekapController::class, 'filter'])
+    ->name('rekap.filter');
+
+/*
+|--------------------------------------------------------------------------
+| HALAMAN LAIN
+|--------------------------------------------------------------------------
+*/
+Route::view('/login', 'login')->name('login');
+Route::view('/profile', 'profile')->name('profile');

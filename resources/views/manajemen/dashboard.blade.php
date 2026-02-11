@@ -142,6 +142,36 @@
         .display-toggle:hover {
             background-color: #322bc0;
         }
+
+        .menu-title {
+    padding: 20px 20px 10px;
+    font-size: 15px;        
+    font-weight: 700;       
+    letter-spacing: 1px;    
+    color: #ffffff;         
+    text-transform: uppercase;
+     text-align: center
+}
+
+.dropdown-menu-custom {
+    display: none;
+    padding-left: 40px;
+}
+
+.sidebar-dropdown.active .dropdown-menu-custom {
+    display: block;
+}
+
+.sidebar-dropdown .arrow {
+    transition: transform 0.3s ease;
+}
+
+.sidebar-dropdown.active .arrow {
+    transform: rotate(180deg);
+}
+
+
+        
         
         @media (max-width: 768px) {
             .sidebar {
@@ -159,6 +189,7 @@
     </style>
 </head>
 <body>
+    
 
 <nav id="navbar" class="navbar navbar-expand-lg navbar-dark ">
         <div class="container-fluid">
@@ -197,8 +228,44 @@
                 <a href="/agenda">
                     <i class="fas fa-calendar-day"></i> Agenda
                 </a>
-               
                 
+              <li class="menu-title">MANAJEMEN</li>
+
+<li class="sidebar-dropdown">
+    <a href="#" class="dropdown-toggle">
+        <span>
+            <i class="bi bi-people"></i>
+            User
+             <i class="bi bi-chevron-down arrow"></i>
+        </span>
+    </a>
+
+    <ul class="dropdown-menu-custom">
+        <li><a href="#">User SKPD</a></li>
+        <li><a href="#">User Non SKPD</a></li>
+        <li><a href="#">User Group</a></li>
+        <li><a href="#">User Permission</a></li>
+    </ul>
+</li>
+
+
+
+        <li>
+            <a href="/manajemen/organisasi">
+                <i class="bi bi-diagram-3"></i>
+                <span>Organisasi</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="/manajemen/pengaturan">
+                <i class="bi bi-gear"></i>
+                <span>Pengaturan</span>
+            </a>
+        </li>
+    </ul>
+
+               
                     <div class="mt-2 px-3">
                         <button class="btn btn-outline-light w-100 display-toggle">
                             <i class="fas fa-desktop me-2"></i> Buka Display
@@ -301,6 +368,14 @@
                     minute: '2-digit'
                 });
             }
+          document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function (e) {
+        e.preventDefault(); // biar ga reload
+
+        const parent = this.closest('.sidebar-dropdown');
+        parent.classList.toggle('active');
+    });
+});
         });
     </script>
 </body>

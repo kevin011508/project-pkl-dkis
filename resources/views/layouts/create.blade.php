@@ -120,7 +120,6 @@
                             <option value="Kabid ITIK" {{ old('disposisi') == 'Kabid ITIK' ? 'selected' : '' }}>Kabid ITIK</option>
                             <option value="KA.DKIS" {{ old('disposisi') == 'KA.DKIS' ? 'selected' : '' }}>KA.DKIS</option>
                             <option value="Sekdis" {{ old('disposisi') == 'Sekdis' ? 'selected' : '' }}>Sekdis</option>
-                            <option value="Bidang Egov" {{ old('disposisi') == 'Bidang Egov' ? 'selected' : '' }}>Bidang Egov</option>
                             <option value="Egov" {{ old('disposisi') == 'Egov' ? 'selected' : '' }}>Egov</option>
                             <option value="Kasubag Program" {{ old('disposisi') == 'Kasubag Program' ? 'selected' : '' }}>Kasubag Program</option>
                         </select>
