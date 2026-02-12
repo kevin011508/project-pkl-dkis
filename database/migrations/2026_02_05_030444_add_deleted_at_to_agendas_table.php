@@ -12,7 +12,7 @@ return new class extends Migration
    public function up()
 {
     Schema::table('agendas', function (Blueprint $table) {
-        $table->softDeletes(); // tambah deleted_at
+        // $table->softDeletes(); // tambah deleted_at
     });
 }
 

@@ -35,10 +35,11 @@
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
         }
         
         .login-header {
-            background-color: #3943ae;;
+            background-color: #3943ae;
             color: white;
             padding: 25px 20px;
             text-align: center;
@@ -93,7 +94,7 @@
         }
         
         .btn-login {
-            background-color: #3943ae;;
+            background-color: #3943ae;
             color: white;
             font-weight: 600;
             padding: 12px;
@@ -108,47 +109,20 @@
             background-color: #3943ae;
             transform: translateY(-2px);
         }
-        
-        .login-footer {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 0.85rem;
-            border-top: 1px solid #eee;
+
+        .alert {
+            font-size: 0.9rem;
         }
-        
-        .login-footer a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-        
-        .login-footer a:hover {
-            text-decoration: underline;
-        }
-        
-        /* Animasi */
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        .login-card {
-            animation: fadeIn 0.6s ease-out;
-        }
-        
-        /* Responsive */
+
         @media (max-width: 576px) {
-            .login-container {
-                padding: 15px;
-            }
-            
-            .login-body {
-                padding: 25px 20px;
-            }
-            
-            .login-header h1 {
-                font-size: 1.8rem;
-            }
+            .login-container { padding: 15px; }
+            .login-body { padding: 25px 20px; }
+            .login-header h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -166,7 +140,20 @@
             
             <!-- Body -->
             <div class="login-body">
-                <form id="loginForm">
+                <form action="{{ route('login.post') }}" method="POST">
+                    @csrf
+
+                    <!-- Tampilkan error jika login salah -->
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <!-- Username -->
                     <div class="mb-4">
                         <label for="username" class="form-label">Username</label>
@@ -174,9 +161,8 @@
                             <span class="input-group-text">
                                 <i class="fas fa-user"></i>
                             </span>
-                            <input type="text" class="form-control" id="username" placeholder="Masukkan username Anda" required>
+                            <input type="text" name="username" class="form-control" id="username" placeholder="Masukkan username Anda" required>
                         </div>
-                        <div class="form-text">Gunakan username yang telah diberikan</div>
                     </div>
                     
                     <!-- Password -->
@@ -186,12 +172,8 @@
                             <span class="input-group-text">
                                 <i class="fas fa-lock"></i>
                             </span>
-                            <input type="password" class="form-control" id="password" placeholder="Masukkan password Anda" required>
-                            <span class="input-group-text password-toggle" id="togglePassword">
-                                <i class="fas fa-eye"></i>
-                            </span>
+                            <input type="password" name="password" class="form-control" id="password" placeholder="Masukkan password Anda" required>
                         </div>
-                        <div class="form-text">Password bersifat sensitif terhadap huruf besar/kecil</div>
                     </div>
                     
                     <!-- Login Button -->
@@ -200,14 +182,8 @@
                     </button>
                 </form>
             </div>
-            
-            <!-- Footer
-            <div class="login-footer">
-                <p>Lupa password? <a href="#" id="forgotPassword">Klik di sini</a> untuk reset</p>
-                <p class="mt-2">&copy; 2023 ISUN - Sistem Informasi Undangan</p>
-            </div>
         </div>
-    </div> -->
+    </div>
 
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -227,44 +203,6 @@
                 icon.classList.remove('fa-eye-slash');
                 icon.classList.add('fa-eye');
             }
-        });
-        
-        // Form submission
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Validasi sederhana
-            if (username.trim() === '' || password.trim() === '') {
-                alert('Username dan password harus diisi!');
-                return;
-            }
-            
-            // Simpan data login di localStorage (untuk simulasi)
-            localStorage.setItem('isun_username', username);
-            localStorage.setItem('isun_logged_in', 'true');
-            
-            // Redirect ke halaman dashboard setelah login berhasil
-            // Ganti 'dashboard.html' dengan halaman tujuan yang sesuai
-            window.location.href = '/';
-            
-            // Untuk testing, bisa gunakan salah satu opsi berikut:
-            // 1. Redirect ke halaman dashboard (rekomendasi)
-            // window.location.href = 'dashboard.html';
-            
-            // 2. Redirect ke halaman lain di folder berbeda
-            // window.location.href = '/admin/dashboard.php';
-            
-            // 3. Redirect dengan parameter username
-            // window.location.href = `dashboard.html?user=${encodeURIComponent(username)}`;
-        });
-        
-        // Forgot password link
-        document.getElementById('forgotPassword').addEventListener('click', function(e) {
-            e.preventDefault();
-            alert('Fitur reset password akan mengirim email ke alamat email terdaftar Anda.');
         });
     </script>
 </body>
