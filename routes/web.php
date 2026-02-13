@@ -6,6 +6,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RekapController;
 use App\Http\Controllers\ManajemenController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserGroupController;
+use App\Http\Controllers\Manajemen\UserGroupsController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -77,4 +80,58 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/rekap/filter', [RekapController::class, 'filter'])
         ->name('rekap.filter');
+});
+
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD
+|--------------------------------------------------------------------------
+*/
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| AGENDA
+|--------------------------------------------------------------------------
+*/
+Route::resource('agenda', AgendaController::class);
+
+/* tambahan agenda (di luar resource) */
+Route::get('/agenda-trash', [AgendaController::class, 'trash'])
+    ->name('agenda.trash');
+
+Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])
+    ->name('agenda.restore');
+
+Route::get('/agenda/export/rekap', [AgendaController::class, 'exportRekap'])
+    ->name('agenda.export-rekap');
+
+/*
+|--------------------------------------------------------------------------
+| REKAP
+|--------------------------------------------------------------------------
+*/
+Route::get('/rekap', [RekapController::class, 'index'])
+    ->name('rekap.index');
+
+Route::post('/rekap/filter', [RekapController::class, 'filter'])
+    ->name('rekap.filter');
+
+/*
+|--------------------------------------------------------------------------
+| HALAMAN LAIN
+|--------------------------------------------------------------------------
+*/
+Route::view('/login', 'login')->name('login');
+Route::view('/profile', 'profile')->name('profile');
+
+
+Route::resource('user-groups', UserGroupController::class);
+
+
+
+
+
+Route::prefix('manajemen')->group(function () {
+    Route::resource('user-groups', UserGroupsController::class);
 });

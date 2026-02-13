@@ -353,63 +353,81 @@
                 <i class="bi bi-graph-up me-2"></i>ISUN
             </a>
         </div>
+          <div class="d-flex align-items-center ms-auto">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person me-1"></i> Profile
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="/profile"><i class="bi bi-pencil-square me-2"></i> Edit Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="/login"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </nav>
     
-   <div class="sidebar-header">
-    <h5 class="sidebar-title">Menu Utama</h5>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-content">
+
+        <!-- Logo -->
+       
+        <!-- Dashboard -->
+        <a href="{{ route('dashboard') }}"
+           class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <i class="bi bi-fire"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <!-- Agenda -->
+        <a href="{{ route('agenda.index') }}"
+           class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">
+            <i class="bi bi-calendar"></i>
+            <span>Agenda</span>
+        </a>
+
+        <hr class="text-light mx-3">
+
+        <!-- Section Title -->
+        <div class="px-3 text-uppercase small text-light opacity-50">
+            Manajemen
+        </div>
+
+        <!-- User -->
+        <a href="{{ route('manajemen.user') }}">
+            <i class="bi bi-people"></i>
+            <span>User</span>
+            <i class="bi bi-chevron-right float-end"></i>
+        </a>
+
+        <!-- Organisasi -->
+        <a href="{{ route('manajemen.organisasi') }}">
+            <i class="bi bi-diagram-3"></i>
+            <span>Organisasi</span>
+            <i class="bi bi-chevron-right float-end"></i>
+        </a>
+
+        <!-- Pengaturan -->
+        <a href="{{ route('manajemen.pengaturan') }}">
+            <i class="bi bi-gear"></i>
+            <span>Pengaturan</span>
+            <i class="bi bi-chevron-right float-end"></i>
+        </a>
+
+        <!-- Buka Display -->
+        <div class="mt-2 px-3">
+                        <button class="btn btn-outline-light w-100 display-toggle">
+                            <i class="fas fa-desktop me-2"></i> Buka Display
+                        </button>
+                    </div>
+
+    </div>
 </div>
 
-<a href="{{ route('dashboard') }}"
-   class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-   <i class="bi bi-speedometer2"></i><span>Dashboard</span>
-</a>
-
-<a href="{{ route('agenda.index') }}"
-   class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">
-   <i class="bi bi-calendar-check"></i><span>Agenda</span>
-</a>
-
-<hr class="text-light mx-3">
-
-<!-- Manajemen -->
-<a href="#manajemenMenu"
-   data-bs-toggle="collapse"
-   class="d-flex justify-content-between align-items-center
-   {{ request()->is('user*','organisasi*','pengaturan*') ? 'active' : '' }}">
-    <span>
-        <i class="bi bi-people"></i>
-        <span>Manajemen</span>
-    </span>
-    <i class="bi bi-chevron-down"></i>
-</a>
-
-<div class="collapse ps-4
-    {{ request()->is('user*','organisasi*','pengaturan*') ? 'show' : '' }}"
-    id="manajemenMenu">
-
-    <a href="{{ route('user.index') }}"
-       class="{{ request()->routeIs('user.*') ? 'active' : '' }}">
-        <i class="bi bi-person"></i><span>User</span>
-    </a>
-
-    <a href="{{ route('organisasi.index') }}"
-       class="{{ request()->routeIs('organisasi.*') ? 'active' : '' }}">
-        <i class="bi bi-diagram-3"></i><span>Organisasi</span>
-    </a>
-
-    <a href="{{ route('pengaturan.index') }}"
-       class="{{ request()->routeIs('pengaturan.*') ? 'active' : '' }}">
-        <i class="bi bi-gear"></i><span>Pengaturan</span>
-    </a>
-</div>
-
-<hr class="text-light mx-3">
-
-<!-- Buka Display -->
-<a href="{{ route('display') }}">
-    <i class="bi bi-box-arrow-up-right"></i>
-    <span>Buka Display</span>
-</a>
  
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
