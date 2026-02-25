@@ -16,7 +16,7 @@
     }
 @endphp
 
-@extends('layouts.app')
+@extends('manajemen.app')
 
 @section('title', 'Agenda - ISUN')
 

@@ -1,102 +1,101 @@
-{{-- user-groups/update.blade.php --}}
 @extends('manajemen.app')
 
-@section('title', 'Edit User Group')
-
-@push('styles')
-<style>
-    .content-section {
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        padding: 25px;
-        margin: 30px 20px;
-    }
-    .form-label {
-        font-weight: 500;
-        color: #495057;
-    }
-    .btn-update {
-        background-color: #0d6efd;
-        color: white;
-        padding: 8px 30px;
-        border-radius: 6px;
-        border: none;
-        font-weight: 500;
-    }
-    .btn-batal {
-        background-color: #6c757d;
-        color: white;
-        padding: 8px 30px;
-        border-radius: 6px;
-        border: none;
-        font-weight: 500;
-    }
-    .page-title {
-        border-bottom: 1px solid #dee2e6;
-        padding-bottom: 15px;
-        margin-bottom: 25px;
-    }
-</style>
-@endpush
+@section('title', 'Detail User Group')
 
 @section('content')
-<div class="content-section">
-    <div class="page-title">
-        <h1>Edit User Group</h1>
+<div class="container py-4">
+
+    <!-- Header + Card dalam satu grid agar sejajar -->
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+
+            <!-- Page Header -->
+            <div class="mb-4">
+                <h2 class="fw-bold text-dark mb-0">Detail User Group</h2>
+            </div>
+
+            <!-- Card -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    
+                    <!-- Nama Group -->
+                    <div class="mb-4 pb-4 border-bottom">
+                        <label class="form-label text-muted small mb-2">Nama Group</label>
+                        <h4 class="fw-semibold text-dark mb-0">
+                            {{ $group->nama }}
+                        </h4>
+                    </div>
+                    
+                    <!-- Detail -->
+                    <div class="row">
+                        
+                        <!-- Left -->
+                        <div class="col-md-6">
+                            
+                            <div class="mb-4">
+                                <label class="form-label text-muted small">Deskripsi</label>
+                                <p class="text-dark mb-0">
+                                    {{ $group->deskripsi ?: '-' }}
+                                </p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label text-muted small">Jumlah Member</label>
+                                <p class="text-dark mb-0">
+                                    {{ $group->member_count ?? 0 }}
+                                </p>
+                            </div>
+                            
+                        </div>
+                        
+                        <!-- Right -->
+                        <div class="col-md-6">
+                            
+                            <div class="mb-4">
+                                <label class="form-label text-muted small">Status</label>
+                                <div>
+                                    @if($group->status == 'Active')
+                                        <span class="badge bg-success px-3 py-2 rounded-pill">
+                                            Active
+                                        </span>
+                                    @else
+                                        <span class="badge bg-danger px-3 py-2 rounded-pill">
+                                            Inactive
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label text-muted small">Tanggal Dibuat</label>
+                                <p class="text-dark mb-0">
+                                    {{ \Carbon\Carbon::parse($group->created_at)->format('Y-m-d H:i:s') }}
+                                </p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label text-muted small">Terakhir Update</label>
+                                <p class="text-dark mb-0">
+                                    {{ \Carbon\Carbon::parse($group->updated_at)->format('Y-m-d H:i:s') }}
+                                </p>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <!-- Tombol hanya Kembali -->
+            <div class="mt-4">
+                <a href="{{ route('manajemen.user-groups.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+            </div>
+
+        </div>
     </div>
 
-    <form action="{{ url('/manajemen/user-groups/' . $group['id']) }}" method="POST">
-        @csrf
-        @method('PUT')
-        
-        <div class="row">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="form-label">Nama Group <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control @error('nama') is-invalid @enderror" 
-                           name="nama" value="{{ old('nama', $group['nama']) }}" required>
-                    @error('nama')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="form-label">Status</label>
-                    <select class="form-select" name="status">
-                        <option value="Active" {{ $group['status'] == 'Active' ? 'selected' : '' }}>Active</option>
-                        <option value="Inactive" {{ $group['status'] == 'Inactive' ? 'selected' : '' }}>Inactive</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Deskripsi</label>
-            <textarea class="form-control" name="deskripsi" rows="4">{{ old('deskripsi', $group['deskripsi']) }}</textarea>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Jumlah Member</label>
-            <input type="number" class="form-control" name="member_count" value="{{ old('member_count', $group['member_count']) }}" min="0">
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Tanggal Dibuat</label>
-            <input type="text" class="form-control" value="{{ $group['created_at'] }}" readonly disabled>
-        </div>
-
-        <hr class="my-4">
-
-        <div class="text-end">
-            <a href="{{ url('/manajemen/user-groups') }}" class="btn-batal me-2">
-                <i class="bi bi-x-circle"></i> Batal
-            </a>
-            <button type="submit" class="btn-update">
-                <i class="bi bi-check-circle"></i> Update
-            </button>
-        </div>
-    </form>
 </div>
 @endsection

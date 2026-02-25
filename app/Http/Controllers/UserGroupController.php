@@ -7,8 +7,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\UserGroup;
 
+
 class UserGroupController extends Controller
 {
+
+public function show($id)
+{
+    $group = \App\Models\UserGroup::findOrFail($id);
+
+    return view('user-groups.show', compact('group'));
+}
     public function index()
     {
         $groups = UserGroup::latest()->paginate(10);
@@ -72,4 +80,5 @@ class UserGroupController extends Controller
         return redirect('/manajemen/user-groups')
             ->with('success', 'User groups berhasil dihapus');
     }
+
 }
