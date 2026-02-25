@@ -158,7 +158,14 @@ Route::post('/rekap/filter', [RekapController::class, 'filter'])
 Route::view('/profile', 'profile')->name('profile');
 
 
+Route::middleware('auth')->group(function () {
 
+    Route::view('/profile', 'profile')->name('profile');
+
+    Route::put('/profile/update', [AuthController::class, 'updateProfile'])
+        ->name('profile.update');
+
+});
 
 
 

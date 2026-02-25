@@ -353,10 +353,17 @@
                 <h5 class="sidebar-title">Menu Utama</h5>
             </div>
             
-           <a href="{{ route('dashboard') }}"
-   class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-   <i class="bi bi-speedometer2"></i><span>Dashboard</span>
-</a>
+          @if(auth()->user()->role == 'superadmin')
+    <a href="{{ route('manajemen.dashboard') }}"
+       class="{{ request()->routeIs('manajemen.dashboard') ? 'active' : '' }}">
+        <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+    </a>
+@else
+    <a href="{{ route('dashboard') }}"
+       class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+        <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+    </a>
+@endif
 
              
 <!-- Di sidebar -->
