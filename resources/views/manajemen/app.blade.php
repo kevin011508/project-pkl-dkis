@@ -37,15 +37,17 @@
         }
         
         .sidebar {
-            background-color: var(--primary-color);
-            min-height: 100vh;
-            color: white;
-            padding: 0;
             position: fixed;
-            width: 250px;
+            top: 56px; 
             left: 0;
-            top: 56px;
+            width: 250px;
+            height: calc(100vh - 56px); 
+            background-color: var(--primary-color);
+            color: white;
             z-index: 1000;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-top: 15px; 
             transition: all 0.3s;
         }
         
@@ -57,6 +59,7 @@
         
         .sidebar a {
             color: #ecf0f1;
+
             text-decoration: none;
             padding: 12px 20px;
             display: block;
@@ -98,6 +101,7 @@
             padding: 20px;
             margin-top: 56px;
             min-height: calc(100vh - 56px);
+            width: calc(100% - 250px);
             transition: margin-left 0.3s;
         }
         
@@ -252,6 +256,14 @@
             background-color: #ffc107;
             color: #212529;
         }
+        .sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+}
         
         /* Responsive */
         @media (max-width: 992px) {
@@ -291,6 +303,25 @@
     font-size: 0.95rem;
     padding-left: 40px;
 }
+.dropdown-menu-custom {
+    display: none;
+    list-style: none;
+    padding-left: 0;
+}
+
+.sidebar-dropdown.open .dropdown-menu-custom {
+    display: block;
+}
+
+.sidebar-dropdown .arrow {
+    float: right;
+    transition: transform 0.3s;
+}
+
+.sidebar-dropdown.open .arrow {
+    transform: rotate(180deg);
+}
+
 
         
         @media (max-width: 768px) {
@@ -342,91 +373,97 @@
 
 </head>
 <body>
-    <!-- Navbar -->
-    <nav id="navbar" class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <button class="navbar-toggler mobile-menu-btn" type="button" id="sidebarToggle">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <a class="navbar-brand" href="{{ route('agenda.index') }}">
-                <i class="bi bi-graph-up me-2"></i>ISUN
-            </a>
+  <nav id="navbar" class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">ISUN</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="d-flex align-items-center ms-auto">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person me-1"></i> Profile
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="/profile"><i class="bi bi-pencil-square me-2"></i> Edit Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <!-- Logout menggunakan form POST Laravel -->
+                        <li>
+                            <a class="dropdown-item text-danger" href="#"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="bi bi-box-arrow-right me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-          <div class="d-flex align-items-center ms-auto">
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person me-1"></i> Profile
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                            <li><a class="dropdown-item" href="/profile"><i class="bi bi-pencil-square me-2"></i> Edit Profile</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="/login"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
-                        </ul>
-                    </li>
+    </div>
+</nav>
+
+<!-- Form Logout Laravel -->
+<form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+    @csrf
+</form>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+                <h5 class="text-center px-3 mb-2">Menu Utama</h5>
+            <a href="{{ route('manajemen.dashboard') }}" class="active">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="/agenda">
+                <i class="fas fa-calendar-day"></i> Agenda
+            </a>
+
+            <li class="menu-title">MANAJEMEN</li>
+
+            <li id="sidebarToggle"class="sidebar-dropdown">
+                <a href="#" class="dropdown-toggle">
+                    <span>
+                        <i class="bi bi-people"></i> User
+                        <i class="bi bi-chevron-down arrow"></i>
+                    </span>
+                </a>
+                <ul class="dropdown-menu-custom"> 
+                     <li> <a href="{{ url('manajemen/user-skpd') }}">User SKPD</a></li> 
+                    <li><a href="{{ url('manajemen/user-non-skpd') }}">User Non SKPD</a></li> 
+                    <li><a href="{{ url('manajemen/user-groups') }}">User Group</a></li>  
+                    <li><a href="{{ url('manajemen/user-permission') }}">User Permission</a></li> </ul>
+            </li>
+            <li class="sidebar-dropdown">
+                <a href="#" class="dropdown-toggle">
+                    <span>
+                        <i class="bi bi-people"></i> Organisasi
+                        <i class="bi bi-chevron-down arrow"></i>
+                    </span>
+                </a>
+                <ul class="dropdown-menu-custom">
+                    <li><a href="{{ url('manajemen/skpd') }}"> SKPD</a></li>
+                    <li><a href="{{ url('manajemen/non-skpd') }}"> Non SKPD</a></li>                 
                 </ul>
+            </li>
+
+          
+
+            <li>
+                <a href="/manajemen/pengaturan">
+                    <i class="bi bi-gear"></i> Pengaturan
+                </a>
+            </li>
+
+            <div class="mt-2 px-3">
+                <button class="btn btn-outline-light w-100 display-toggle">
+                    <i class="fas fa-desktop me-2"></i> Buka Display
+                </button>
             </div>
         </div>
-    </nav>
-    
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-content">
 
-        <!-- Logo -->
-       
-        <!-- Dashboard -->
-        <a href="{{ route('dashboard') }}"
-           class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-            <i class="bi bi-fire"></i>
-            <span>Dashboard</span>
-        </a>
-
-        <!-- Agenda -->
-        <a href="{{ route('agenda.index') }}"
-           class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">
-            <i class="bi bi-calendar"></i>
-            <span>Agenda</span>
-        </a>
-
-        <hr class="text-light mx-3">
-
-        <!-- Section Title -->
-        <div class="px-3 text-uppercase small text-light opacity-50">
-            Manajemen
-        </div>
-
-        <!-- User -->
-        <a href="{{ route('manajemen.user') }}">
-            <i class="bi bi-people"></i>
-            <span>User</span>
-            <i class="bi bi-chevron-right float-end"></i>
-        </a>
-
-        <!-- Organisasi -->
-        <a href="{{ route('manajemen.organisasi') }}">
-            <i class="bi bi-diagram-3"></i>
-            <span>Organisasi</span>
-            <i class="bi bi-chevron-right float-end"></i>
-        </a>
-
-        <!-- Pengaturan -->
-        <a href="{{ route('manajemen.pengaturan') }}">
-            <i class="bi bi-gear"></i>
-            <span>Pengaturan</span>
-            <i class="bi bi-chevron-right float-end"></i>
-        </a>
-
-        <!-- Buka Display -->
-        <div class="mt-2 px-3">
-                        <button class="btn btn-outline-light w-100 display-toggle">
-                            <i class="fas fa-desktop me-2"></i> Buka Display
-                        </button>
-                    </div>
-
-    </div>
-</div>
 
  
     <!-- Main Content -->
@@ -500,6 +537,14 @@
                 });
             }, 5000);
         });
+        document.querySelectorAll('.sidebar-dropdown > a').forEach(function(menu) {
+    menu.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const parent = this.parentElement;
+        parent.classList.toggle('open');
+    });
+});
     </script>
     @stack('scripts')
 </body>

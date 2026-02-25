@@ -153,92 +153,48 @@
             <th width="30%">Aksi</th>
         </tr>
     </thead>
+
     <tbody>
+        @forelse($groups as $group)
         <tr>
-            <td>1</td>
-            <td>Admin Setda</td>
-      <td class="text-center align-middle">
-    <button type="button" class="btn p-0 border-0 bg-transparent" onclick="location.href='{{ url('/manajemen/user-groups/1') }}'">
-        <span class="badge bg-primary me-1 p-2">
-            <i class="bi bi-eye text-white"></i>
-        </span>
-    </button>
-    
-    <button type="button" class="btn p-0 border-0 bg-transparent" onclick="location.href='{{ url('/manajemen/user-groups/1/edit') }}'">
-        <span class="badge bg-warning me-1 p-2">
-            <i class="bi bi-pencil text-white"></i>
-        </span>
-    </button>
-    
-    <button type="button" class="btn p-0 border-0 bg-transparent" onclick="if(confirm('Hapus data?')) document.getElementById('delete-form-1').submit()">
-        <span class="badge bg-danger p-2">
-            <i class="bi bi-trash text-white"></i>
-        </span>
-    </button>
-    
-    <form id="delete-form-1" action="{{ url('/manajemen/user-groups.index.blade.php') }}" method="POST" class="d-none">
-        @csrf
-        @method('DELETE')
-    </form>
-</td>
+            <td>{{ $loop->iteration }}</td>
+            <td>{{ $group->nama }}</td>
+            <td class="text-center align-middle">
+
+                <a href="{{ route('manajemen.user-groups.show', $group->id) }}" class="btn p-0 border-0 bg-transparent">
+                    <span class="badge bg-primary me-1 p-2">
+                        <i class="bi bi-eye text-white"></i>
+                    </span>
+                </a>
+
+                <a href="{{ route('manajemen.user-groups.edit', $group->id) }}" class="btn p-0 border-0 bg-transparent">
+                    <span class="badge bg-warning me-1 p-2">
+                        <i class="bi bi-pencil text-white"></i>
+                    </span>
+                </a>
+
+                <form action="{{ route('manajemen.user-groups.destroy', $group->id) }}" 
+                      method="POST" 
+                      style="display:inline-block;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn p-0 border-0 bg-transparent"
+                        onclick="return confirm('Hapus data?')">
+                        <span class="badge bg-danger p-2">
+                            <i class="bi bi-trash text-white"></i>
+                        </span>
+                    </button>
+                </form>
+
+            </td>
         </tr>
+        @empty
         <tr>
-            <td>2</td>
-            <td>Administrator</td>
-           <td class="text-center align-middle">
-    <button type="button" class="btn p-0 border-0 bg-transparent" onclick="location.href='{{ url('/manajemen/user-groups/1') }}'">
-        <span class="badge bg-primary me-1 p-2">
-            <i class="bi bi-eye text-white"></i>
-        </span>
-    </button>
-    
-    <button type="button" class="btn p-0 border-0 bg-transparent" onclick="location.href='{{ url('/manajemen/user-groups/1/edit') }}'">
-        <span class="badge bg-warning me-1 p-2">
-            <i class="bi bi-pencil text-white"></i>
-        </span>
-    </button>
-    
-    <button type="button" class="btn p-0 border-0 bg-transparent" onclick="if(confirm('Hapus data?')) document.getElementById('delete-form-1').submit()">
-        <span class="badge bg-danger p-2">
-            <i class="bi bi-trash text-white"></i>
-        </span>
-    </button>
-    
-    <form id="delete-form-1" action="{{ url('/manajemen/user-groups.index.blade.php') }}" method="POST" class="d-none">
-        @csrf
-        @method('DELETE')
-    </form>
-</td>
+            <td colspan="3" class="text-center">Tidak ada data</td>
         </tr>
-        <tr>
-            <td>3</td>
-            <td>Operator</td>
-  <td class="text-center align-middle">
-    <button type="button" class="btn p-0 border-0 bg-transparent" onclick="location.href='{{ url('/manajemen/user-groups/1') }}'">
-        <span class="badge bg-primary me-1 p-2">
-            <i class="bi bi-eye text-white"></i>
-        </span>
-    </button>
-    
-    <button type="button" class="btn p-0 border-0 bg-transparent" onclick="location.href='{{ url('/manajemen/user-groups/1/edit') }}'">
-        <span class="badge bg-warning me-1 p-2">
-            <i class="bi bi-pencil text-white"></i>
-        </span>
-    </button>
-    
-    <button type="button" class="btn p-0 border-0 bg-transparent" onclick="if(confirm('Hapus data?')) document.getElementById('delete-form-1').submit()">
-        <span class="badge bg-danger p-2">
-            <i class="bi bi-trash text-white"></i>
-        </span>
-    </button>
-    
-    <form id="delete-form-1" action="{{ url('/manajemen/user-groups.index.blade.php') }}" method="POST" class="d-none">
-        @csrf
-        @method('DELETE')
-    </form>
-</td>
-        </tr>
+        @endforelse
     </tbody>
+
 </table>
 
 {{-- Footer Info --}}

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Agenda;
 use Carbon\Carbon;
+
 class ManajemenController extends Controller
 {
     public function index()

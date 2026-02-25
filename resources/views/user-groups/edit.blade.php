@@ -1,4 +1,3 @@
-{{-- user-groups/edit.blade.php --}}
 @extends('manajemen.app')
 
 @section('title', 'Edit User Group')
@@ -117,7 +116,7 @@
             </div>
             <div>
                 <h1 class="mb-1">Edit User Group</h1>
-                <p class="text-muted mb-0">Ubah informasi user group #{{ $group['id'] }}</p>
+                <p class="text-muted mb-0">Ubah informasi user group #{{ $user['id'] }}</p>
             </div>
         </div>
         <a href="{{ url('/manajemen/user-groups') }}" class="btn btn-outline-secondary">
@@ -126,13 +125,13 @@
     </div>
 
     {{-- Form Edit --}}
-    <form action="{{ url('/manajemen/user-groups/' . $group['id']) }}" method="POST">
+    <form action="{{ url('/manajemen/user-groups/' . $user['id']) }}" method="POST">
         @csrf
         @method('PUT')
         
         <div class="row">
             {{-- Kolom Kiri --}}
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
                         <h5 class="card-title mb-4 fw-semibold">
@@ -149,7 +148,7 @@
                                    class="form-control @error('nama') is-invalid @enderror" 
                                    id="nama" 
                                    name="nama" 
-                                   value="{{ old('nama', $group['nama']) }}" 
+                                   value="{{ old('nama', $user['nama']) }}" 
                                    placeholder="Masukkan nama group"
                                    required>
                             @error('nama')
@@ -167,7 +166,7 @@
                                       id="deskripsi" 
                                       name="deskripsi" 
                                       rows="4" 
-                                      placeholder="Masukkan deskripsi group">{{ old('deskripsi', $group['deskripsi']) }}</textarea>
+                                      placeholder="Masukkan deskripsi group">{{ old('deskripsi', $user['deskripsi']) }}</textarea>
                             @error('deskripsi')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -177,143 +176,9 @@
                 </div>
             </div>
 
-            {{-- Kolom Kanan --}}
-            <div class="col-md-4">
-                {{-- Status Card --}}
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-body p-4">
-                        <h5 class="card-title mb-4 fw-semibold">
-                            <i class="bi bi-toggle-on text-primary me-2"></i>
-                            Status
-                        </h5>
+           
                         
-                        <div class="mb-4">
-                            <label for="status" class="form-label">Status Group</label>
-                            <select class="form-select @error('status') is-invalid @enderror" 
-                                    id="status" 
-                                    name="status">
-                                <option value="Active" {{ old('status', $group['status']) == 'Active' ? 'selected' : '' }}>
-                                    <span class="badge bg-success">Active</span> - Group Aktif
-                                </option>
-                                <option value="Inactive" {{ old('status', $group['status']) == 'Inactive' ? 'selected' : '' }}>
-                                    <span class="badge bg-danger">Inactive</span> - Group Tidak Aktif
-                                </option>
-                            </select>
-                            @error('status')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="member_count" class="form-label">
-                                Jumlah Member
-                            </label>
-                            <input type="number" 
-                                   class="form-control @error('member_count') is-invalid @enderror" 
-                                   id="member_count" 
-                                   name="member_count" 
-                                   value="{{ old('member_count', $group['member_count']) }}" 
-                                   min="0">
-                            @error('member_count')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Info Card --}}
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-body p-4">
-                        <h5 class="card-title mb-4 fw-semibold">
-                            <i class="bi bi-clock-history text-primary me-2"></i>
-                            Informasi Sistem
-                        </h5>
-                        
-                        <div class="info-card">
-                            <table class="table table-sm table-borderless">
-                                <tr>
-                                    <td width="40%"><small class="text-muted">ID Group</small></td>
-                                    <td><strong>#{{ $group['id'] }}</strong></td>
-                                </tr>
-                                <tr>
-                                    <td><small class="text-muted">Dibuat Pada</small></td>
-                                    <td>
-                                        <strong>{{ \Carbon\Carbon::parse($group['created_at'])->format('d/m/Y H:i') }}</strong>
-                                        <br>
-                                        <small class="text-muted">{{ \Carbon\Carbon::parse($group['created_at'])->diffForHumans() }}</small>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><small class="text-muted">Terakhir Update</small></td>
-                                    <td>
-                                        <strong>{{ now()->format('d/m/Y H:i') }}</strong>
-                                        <br>
-                                        <small class="text-muted">Sekarang</small>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><small class="text-muted">Status Saat Ini</small></td>
-                                    <td>
-                                        @if($group['status'] == 'Active')
-                                            <span class="badge-status badge-active">Active</span>
-                                        @else
-                                            <span class="badge-status badge-inactive">Inactive</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Preview Card --}}
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h5 class="card-title fw-semibold mb-0">
-                        <i class="bi bi-eye text-primary me-2"></i>
-                        Preview Perubahan
-                    </h5>
-                    <span class="badge bg-warning text-dark">Live Preview</span>
-                </div>
-                
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th width="10%">No</th>
-                                <th width="40%">Nama Group</th>
-                                <th width="30%">Deskripsi</th>
-                                <th width="10%">Member</th>
-                                <th width="10%">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="previewBody">
-                            <tr>
-                                <td class="text-center align-middle">1</td>
-                                <td class="align-middle fw-bold" id="previewNama">{{ $group['nama'] }}</td>
-                                <td class="align-middle" id="previewDeskripsi">{{ $group['deskripsi'] }}</td>
-                                <td class="text-center align-middle">
-                                    <span class="badge bg-secondary" id="previewMember">{{ $group['member_count'] }}</span>
-                                </td>
-                                <td class="text-center align-middle">
-                                    <span id="previewStatus">
-                                        @if($group['status'] == 'Active')
-                                            <span class="badge-status badge-active">Active</span>
-                                        @else
-                                            <span class="badge-status badge-inactive">Inactive</span>
-                                        @endif
-                                    </span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
+                       
         {{-- Tombol Aksi --}}
         <div class="d-flex justify-content-end gap-3">
             <a href="{{ url('/manajemen/user-groups') }}" class="btn btn-batal">
@@ -325,6 +190,7 @@
         </div>
     </form>
 </div>
+@endsection
 
 @push('scripts')
 <script>
@@ -342,14 +208,14 @@
 
         function updatePreview() {
             // Update Nama
-            previewNama.textContent = namaInput.value || '{{ $group['nama'] }}';
+            previewNama.textContent = namaInput.value || '{{ $user['nama'] }}';
             
             // Update Deskripsi
-            let deskripsi = deskripsiInput.value || '{{ $group['deskripsi'] }}';
+            let deskripsi = deskripsiInput.value || '{{ $user['deskripsi'] }}';
             previewDeskripsi.textContent = deskripsi.length > 30 ? deskripsi.substring(0, 30) + '...' : deskripsi;
             
             // Update Member
-            previewMember.textContent = memberInput.value || '{{ $group['member_count'] }}';
+            previewMember.textContent = memberInput.value || '{{ $user['member_count'] }}';
             
             // Update Status
             const status = statusSelect.value;
@@ -374,4 +240,3 @@
     });
 </script>
 @endpush
-@endsection

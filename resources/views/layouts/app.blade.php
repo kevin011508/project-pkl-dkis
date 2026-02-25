@@ -341,7 +341,7 @@
             </button>
             
             <a class="navbar-brand" href="{{ route('agenda.index') }}">
-                <i class="bi bi-graph-up me-2"></i>ISUN
+                <i class=></i>ISUN
             </a>
         </div>
     </nav>

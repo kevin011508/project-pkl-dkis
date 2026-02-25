@@ -94,7 +94,7 @@
         <!-- Sidebar -->
         <div class="col-lg-2 col-md-3 sidebar">
             <h5 class="text-center px-3 mb-2">Menu Utama</h5>
-            <a href="{{ route('dashboard') }}" class="active">
+            <a href="{{ route('manajemen.dashboard') }}" class="active">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
             <a href="/agenda">
@@ -110,19 +110,26 @@
                         <i class="bi bi-chevron-down arrow"></i>
                     </span>
                 </a>
+                <ul class="dropdown-menu-custom"> 
+                    <li> <a href="{{ url('manajemen/user-skpd') }}">User SKPD</a></li> 
+                    <li><a href="{{ url('manajemen/user-non-skpd') }}">User Non SKPD</a></li> 
+                    <li><a href="{{ url('manajemen/user-groups') }}">User Group</a></li>  
+                    <li><a href="{{ url('manajemen/user-permission') }}">User Permission</a></li> </ul>
+            </li>
+            <li class="sidebar-dropdown">
+                <a href="#" class="dropdown-toggle">
+                    <span>
+                        <i class="bi bi-people"></i> Organisasi
+                        <i class="bi bi-chevron-down arrow"></i>
+                    </span>
+                </a>
                 <ul class="dropdown-menu-custom">
-                    <li><a href="#">User SKPD</a></li>
-                    <li><a href="#">User Non SKPD</a></li>
-                    <li><a href="#">User Group</a></li>
-                    <li><a href="#">User Permission</a></li>
+                    <li><a href="{{ url('manajemen/skpd') }}">SKPD</a></li>
+                    <li><a href="{{ url('manajemen/non-skpd') }}">Non SKPD</a></li>                 
                 </ul>
             </li>
 
-            <li>
-                <a href="/manajemen/organisasi">
-                    <i class="bi bi-diagram-3"></i> Organisasi
-                </a>
-            </li>
+          
 
             <li>
                 <a href="/manajemen/pengaturan">
@@ -137,54 +144,11 @@
             </div>
         </div>
 
-<<<<<<< HEAD
         <!-- Main Content -->
         <div class="col-lg-10 col-md-9 main-content">
             <div class="dashboard-header">
                 <h1 class="dashboard-title">Dashboard</h1>
                 <p class="text-muted">Ringkasan informasi agenda dan aktivitas</p>
-=======
-<li class="sidebar-dropdown">
-    <a href="#" class="dropdown-toggle">
-        <span>
-            <i class="bi bi-people"></i>
-            User
-             <i class="bi bi-chevron-down arrow"></i>
-        </span>
-    </a>
-
-    <ul class="dropdown-menu-custom">
-        <li><a href="#">User SKPD</a></li>
-        <li><a href="#">User Non SKPD</a></li>
-        <li><a href="/user-groups">User Group</a></li>
-        <li><a href="#">User Permission</a></li>
-    </ul>
-</li>
-
-
-
-        <li>
-            <a href="/manajemen/organisasi">
-                <i class="bi bi-diagram-3"></i>
-                <span>Organisasi</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="/manajemen/pengaturan">
-                <i class="bi bi-gear"></i>
-                <span>Pengaturan</span>
-            </a>
-        </li>
-    </ul>
-
-               
-                    <div class="mt-2 px-3">
-                        <button class="btn btn-outline-light w-100 display-toggle">
-                            <i class="fas fa-desktop me-2"></i> Buka Display
-                        </button>
-                    </div>
->>>>>>> 7b0bcdf (menambahkan file lainnya)
             </div>
 
             <div class="row">
