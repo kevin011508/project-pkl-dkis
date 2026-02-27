@@ -10,7 +10,7 @@ class UserPermission extends Model
 {
     use HasFactory;
 
-    protected $table = 'user_permissions';
+    protected $table = 'permissions';
 
     protected $fillable = [
         'controller',

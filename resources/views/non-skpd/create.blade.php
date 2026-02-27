@@ -20,8 +20,7 @@
                        id="nama" 
                        name="nama" 
                        value="{{ old('nama') }}" 
-                       placeholder="Masukkan nama"
-                       required>
+                       placeholder="Masukkan nama">
                 @error('nama')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

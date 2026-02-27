@@ -10,7 +10,7 @@ class Skpd extends Model
 {
     use HasFactory;
 
-    protected $table = 'skpd';
+    protected $table = 'crb_skpd';
     
     protected $fillable = [
         'nama',

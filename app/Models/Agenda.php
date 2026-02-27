@@ -11,30 +11,31 @@ class Agenda extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = [
-        'nama_agenda',
-        'deskripsi',
-        'penyelenggara',
-        'lokasi',
-        'alamat',
-        'disposisi',
-        'seragam',
-        'tanggal_mulai',
-        'tanggal_selesai',
-        'status_selesai',
-        'lampiran',
-        'sifat_agenda',
-        'status'
-    ];
+    protected $table = 'agenda';
+    
+  protected $fillable = [
+    'nama_agenda',
+    'tanggal_awal',
+    'tanggal_akhir',
+    'lokasi',
+    'alamat',
+    'deskripsi',
+    'penyelenggara',
+    'seragam',
+    'disposisi',
+    'status',
+    'lampiran',
+    'created_by',
+    'updated_by',
+    'is_locked'
+];
 
-    protected $casts = [
-        'tanggal_mulai' => 'datetime',
-        'tanggal_selesai' => 'datetime',
-        'status_selesai' => 'boolean',
-    ];
+protected $casts = [
+    'tanggal_awal' => 'datetime',
+    'tanggal_akhir' => 'datetime',
+];
 
-     protected $dates = ['deleted_at', 'tanggal_mulai'];
-}
+protected $dates = ['deleted_at', 'tanggal_awal'];}
 
  
 

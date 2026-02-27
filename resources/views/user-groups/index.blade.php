@@ -119,8 +119,8 @@
 <div class="content-section">
     <div class="main-title">
         <h1>User Groups</h1>
-        <a href="{{ url('/manajemen/user-groups/create') }}" class="btn-tambah">
-            <i></i> Tambah
+         <a href="{{ url('/manajemen/user-skpd/create') }}" class="btn-tambah">
+            <i class="bi bi-plus-circle me-2"></i>Tambahkan
         </a>
     </div>
     

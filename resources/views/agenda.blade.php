@@ -14,9 +14,11 @@
         $agendas = $query->paginate($perPage);
         $totalAgendas = \App\Models\Agenda::count();
     }
+
+    $layout = auth()->user()->role === 'superadmin' ? 'manajemen.app' : 'layouts.app';
 @endphp
 
-@extends('manajemen.app')
+@extends($layout)
 
 @section('title', 'Agenda - ISUN')
 
@@ -99,8 +101,8 @@
                             </td>
                             <td>{{ $agenda->disposisi }}</td>
                             <td>
-                                <div>{{ $agenda->tanggal_mulai->format('Y-m-d') }}</div>
-                                <small class="text-muted">{{ $agenda->tanggal_mulai->format('H:i:s') }}</small>
+                                <div>{{ $agenda->tanggal_awal->format('Y-m-d') }}</div>
+                                <small class="text-muted">{{ $agenda->tanggal_awal->format('H:i:s') }}</small>
                             </td>
                             <td>
                                 @if($agenda->status == 'selesai')
@@ -115,7 +117,7 @@
                                 <a href="{{ route('agenda.show', $agenda->id) }}" class="btn btn-primary btn-sm">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="{{ route('agenda.edit', $agenda->id) }}" class="btn btn-warning">
+                                <a href="{{ route('agenda.edit', $agenda->id) }}" class="btn btn-warning btn-sm">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <form action="{{ route('agenda.destroy', $agenda->id) }}"

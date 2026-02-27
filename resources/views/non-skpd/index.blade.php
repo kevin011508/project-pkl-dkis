@@ -81,9 +81,9 @@
             </div>
             
             <div>
-                <a href="{{ route('manajemen.non-skpd.create') }}" class="btn-tambah">
-                    <i class="fas fa-plus"></i> Tambah
-                </a>
+                <a href="{{ url('/manajemen/user-skpd/create') }}" class="btn-tambah">
+            <i class="bi bi-plus-circle me-2"></i>Tambahkan
+        </a>    
             </div>
         </div>
         

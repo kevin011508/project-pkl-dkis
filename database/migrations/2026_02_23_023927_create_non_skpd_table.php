@@ -7,19 +7,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('non_skpd', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama');
-            $table->string('alias')->nullable();
-            $table->timestamps();
+
+            $table->id(); // primary key auto increment
+
+            $table->string('nama', 100);
+
+            $table->string('alias', 50);
+
+            $table->timestamp('created_at')->nullable();
+
+            $table->timestamp('updated_at')->nullable();
+
+            $table->unsignedInteger('created_by')->nullable();
+
+            $table->unsignedInteger('updated_by')->nullable();
+
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('non_skpd');
     }
 };
-?>

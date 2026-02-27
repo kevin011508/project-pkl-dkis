@@ -13,26 +13,6 @@ use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\SkpdController;
 use App\Http\Controllers\NonSkpdController;
 
-Route::prefix('manajemen')->name('manajemen.')->group(function () {
-    Route::resource('non-skpd', NonSkpdController::class);
-});
-// Route yang benar
-Route::prefix('manajemen')->name('manajemen.')->group(function () {
-    Route::resource('skpd', SkpdController::class);
-});
-
-Route::prefix('manajemen')->group(function () {
-    Route::resource('user-permission', UserPermissionController::class);
-    Route::post('/user-permission/toggle/{id}', [UserPermissionController::class, 'toggleStatus'])->name('user-permission.toggle');
-});
-
-Route::prefix('manajemen')->group(function () {
-    Route::resource('user-non-skpd', UserNonSkpdController::class);
-});
-
-Route::prefix('manajemen')->group(function () {
-    Route::resource('user-skpd', UserSkpdController::class);
-});
 /*
 |--------------------------------------------------------------------------
 | LOGIN
@@ -59,11 +39,47 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | DASHBOARD ADMIN
+    | DASHBOARD
     |--------------------------------------------------------------------------
     */
     Route::get('/', [DashboardController::class, 'index'])
         ->name('dashboard');
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROFILE
+    |--------------------------------------------------------------------------
+    */
+    Route::view('/profile', 'profile')->name('profile');
+    Route::put('/profile/update', [AuthController::class, 'updateProfile'])
+        ->name('profile.update');
+
+    /*
+    |--------------------------------------------------------------------------
+    | AGENDA - custom routes HARUS di atas resource
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/agenda-trash', [AgendaController::class, 'trash'])
+        ->name('agenda.trash');
+
+    Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])
+        ->name('agenda.restore');
+
+    Route::get('/agenda/export/rekap', [AgendaController::class, 'exportRekap'])
+        ->name('agenda.export-rekap');
+
+    Route::resource('agenda', AgendaController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | REKAP
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/rekap', [RekapController::class, 'index'])
+        ->name('rekap.index');
+
+    Route::post('/rekap/filter', [RekapController::class, 'filter'])
+        ->name('rekap.filter');
 
     /*
     |--------------------------------------------------------------------------
@@ -77,95 +93,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/pengaturan', [ManajemenController::class, 'pengaturan'])->name('pengaturan');
 
         Route::resource('user-groups', UserGroupController::class);
-
+        Route::resource('skpd', SkpdController::class);
+        Route::resource('non-skpd', NonSkpdController::class);
+        Route::resource('user-skpd', UserSkpdController::class);
+        Route::resource('user-non-skpd', UserNonSkpdController::class);
+        Route::resource('user-permission', UserPermissionController::class);
+        Route::post('/user-permission/toggle/{id}', [UserPermissionController::class, 'toggleStatus'])
+            ->name('user-permission.toggle');
     });
-
-    /*
-    |--------------------------------------------------------------------------
-    | AGENDA
-    |--------------------------------------------------------------------------
-    */
-    Route::resource('agenda', AgendaController::class);
-
-    Route::get('/agenda-trash', [AgendaController::class, 'trash'])
-        ->name('agenda.trash');
-
-    Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])
-        ->name('agenda.restore');
-
-    Route::get('/agenda/export/rekap', [AgendaController::class, 'exportRekap'])
-        ->name('agenda.export-rekap');
-
-    /*
-    |--------------------------------------------------------------------------
-    | REKAP
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/rekap', [RekapController::class, 'index'])
-        ->name('rekap.index');
-
-    Route::post('/rekap/filter', [RekapController::class, 'filter'])
-        ->name('rekap.filter');
 });
-Route::prefix('manajemen')->name('manajemen.')->group(function () {
-    Route::resource('non-skpd', NonSkpdController::class);
-});
-
-Route::prefix('manajemen')->name('manajemen.')->group(function () {
-    Route::resource('skpd', SkpdController::class);
-});
-/*
-|--------------------------------------------------------------------------
-| DASHBOARD
-|--------------------------------------------------------------------------
-*/
-// Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
-/*
-|--------------------------------------------------------------------------
-| AGENDA
-|--------------------------------------------------------------------------
-*/
-// Route::resource('agenda', AgendaController::class);
-
-// /* tambahan agenda (di luar resource) */
-// Route::get('/agenda-trash', [AgendaController::class, 'trash'])
-//     ->name('agenda.trash');
-
-// Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])
-//     ->name('agenda.restore');
-
-// Route::get('/agenda/export/rekap', [AgendaController::class, 'exportRekap'])
-//     ->name('agenda.export-rekap');
-
-/*
-|--------------------------------------------------------------------------
-| REKAP
-|--------------------------------------------------------------------------
-*/
-Route::get('/rekap', [RekapController::class, 'index'])
-    ->name('rekap.index');
-
-Route::post('/rekap/filter', [RekapController::class, 'filter'])
-    ->name('rekap.filter');
-
-/*
-|--------------------------------------------------------------------------
-| HALAMAN LAIN
-|--------------------------------------------------------------------------
-*/
-// Route::view('/login', 'login')->name('login');
-Route::view('/profile', 'profile')->name('profile');
-
-
-Route::middleware('auth')->group(function () {
-
-    Route::view('/profile', 'profile')->name('profile');
-
-    Route::put('/profile/update', [AuthController::class, 'updateProfile'])
-        ->name('profile.update');
-
-});
-
-
-

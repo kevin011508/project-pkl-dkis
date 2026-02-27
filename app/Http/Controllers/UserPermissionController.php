@@ -26,8 +26,11 @@ class UserPermissionController extends Controller
     {
         $request->validate([
             'controller' => 'required|string',
-            'action' => 'required|string',
-            'info' => 'nullable|string',
+            'action'     => 'required|string',
+            'info'       => 'nullable|string',
+        ], [
+            'controller.required' => 'Controller wajib dipilih.',
+            'action.required'     => 'Aksi wajib dipilih.',
         ]);
 
         UserPermission::create($request->all());
@@ -50,8 +53,11 @@ class UserPermissionController extends Controller
 
         $request->validate([
             'controller' => 'required|string',
-            'action' => 'required|string',
-            'info' => 'nullable|string',
+            'action'     => 'required|string',
+            'info'       => 'nullable|string',
+        ], [
+            'controller.required' => 'Controller wajib dipilih.',
+            'action.required'     => 'Aksi wajib dipilih.',
         ]);
 
         $permission->update($request->all());

@@ -13,11 +13,11 @@ class ManajemenController extends Controller
 
     $now = Carbon::now();
 
-    $todayAgendas = Agenda::whereDate('tanggal_mulai', $now->toDateString())->count();
-    $monthAgendas = Agenda::whereMonth('tanggal_mulai', $now->month)
-        ->whereYear('tanggal_mulai', $now->year)
+    $todayAgendas = Agenda::whereDate('tanggal_awal', $now->toDateString())->count();
+    $monthAgendas = Agenda::whereMonth('tanggal_awal', $now->month)
+        ->whereYear('tanggal_awal', $now->year)
         ->count();
-    $yearAgendas = Agenda::whereYear('tanggal_mulai', $now->year)->count();
+    $yearAgendas = Agenda::whereYear('tanggal_awal', $now->year)->count();
     $totalAgendas = Agenda::count();
 
     return view('manajemen.dashboard', compact(

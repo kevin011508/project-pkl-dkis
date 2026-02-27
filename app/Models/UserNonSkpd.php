@@ -10,12 +10,14 @@ class UserNonSkpd extends Model
 {
     use HasFactory;
 
-    protected $table = 'user_non_skpd';
+   protected $table = 'non_skpd';
 
-    protected $fillable = [
-        'username',
-        'user_group',
-        'non_skpd',
-        'pin',
-    ];
+protected $fillable = [
+    'username',
+    'password',
+    'pin',
+    'user_group',
+    'non_skpd',
+    'terkunci',
+];
 }

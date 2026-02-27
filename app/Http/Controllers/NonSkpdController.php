@@ -28,8 +28,12 @@ class NonSkpdController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'alias' => 'nullable|string|max:50'
+            'nama'  => 'required|string|max:255',
+            'alias' => 'nullable|string|max:50',
+        ], [
+            'nama.required' => 'Nama wajib diisi.',
+            'nama.max'      => 'Nama maksimal 255 karakter.',
+            'alias.max'     => 'Alias maksimal 50 karakter.',
         ]);
         
         NonSkpd::create($request->all());
@@ -46,8 +50,12 @@ class NonSkpdController extends Controller
     public function update(Request $request, NonSkpd $nonSkpd)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'alias' => 'nullable|string|max:50'
+            'nama'  => 'required|string|max:255',
+            'alias' => 'nullable|string|max:50',
+        ], [
+            'nama.required' => 'Nama wajib diisi.',
+            'nama.max'      => 'Nama maksimal 255 karakter.',
+            'alias.max'     => 'Alias maksimal 50 karakter.',
         ]);
         
         $nonSkpd->update($request->all());
@@ -64,4 +72,3 @@ class NonSkpdController extends Controller
                          ->with('success', 'Data Non SKPD berhasil dihapus');
     }
 }
-?>

@@ -1,110 +1,141 @@
-{{-- resources/views/user-permission/create.blade.php --}}
 @extends('manajemen.app')
 
-@section('title', 'Tambah User Permission')
+@section('title', 'Tambah User Permission - ISUN')
 
 @push('styles')
 <style>
-    .content-section {
+    .form-container {
         background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        padding: 25px;
-        margin: 30px 20px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
     }
+
+    .form-body {
+        padding: 30px;
+    }
+
+    .form-footer {
+        padding: 15px 30px;
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
     .form-label {
         font-weight: 500;
         color: #495057;
+        margin-bottom: 6px;
     }
+
+    .form-control, .form-select {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
     .btn-simpan {
-        background-color: #0d6efd;
+        background-color: var(--secondary-color);
         color: white;
-        padding: 10px 30px;
-        border-radius: 8px;
         border: none;
+        padding: 8px 24px;
+        border-radius: 6px;
         font-weight: 500;
     }
-    .btn-batal {
+
+    .btn-simpan:hover { background-color: #3a5fd9; color: white; }
+
+    .btn-kembali {
         background-color: #6c757d;
         color: white;
-        padding: 10px 30px;
-        border-radius: 8px;
         border: none;
+        padding: 8px 24px;
+        border-radius: 6px;
         font-weight: 500;
     }
+
+    .btn-kembali:hover { background-color: #5a6268; color: white; }
 </style>
 @endpush
 
 @section('content')
-<div class="content-section">
-    <div class="d-flex align-items-center mb-4">
-        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
-             style="width: 45px; height: 45px;">
-            <i class="bi bi-plus-circle text-white fs-5"></i>
-        </div>
-        <h1 class="mb-0">Tambah User Permission</h1>
-    </div>
+    <h4 class="page-title">Tambah User Permission</h4>
 
-    <form action="{{ url('/manajemen/user-permission') }}" method="POST">
-        @csrf
+    <div class="form-container">
+        <form action="{{ url('manajemen/user-permission') }}" method="POST">
+            @csrf
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="form-label">Controller <span class="text-danger">*</span></label>
-                    <select class="form-select @error('controller') is-invalid @enderror" name="controller">
-                        <option value="">-- Pilih Controller --</option>
-                        @foreach($controllers as $controller)
-                            <option value="{{ $controller }}" {{ old('controller') == $controller ? 'selected' : '' }}>
-                                {{ $controller }}
-                            </option>
-                        @endforeach
-                    </select>
+            <div class="form-body">
+
+                {{-- Controller --}}
+                <div class="form-group">
+                    <label class="form-label" for="controller">Controller <span class="text-danger">*</span></label>
+                    <input type="text"
+                           class="form-control @error('controller') is-invalid @enderror"
+                           id="controller"
+                           name="controller"
+                           value="{{ old('controller') }}"
+                           placeholder="Cari controller atau action...">
                     @error('controller')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="form-label">Action <span class="text-danger">*</span></label>
-                    <select class="form-select @error('action') is-invalid @enderror" name="action">
-                        <option value="">-- Pilih Action --</option>
-                        @foreach($actions as $action)
-                            <option value="{{ $action }}" {{ old('action') == $action ? 'selected' : '' }}>
-                                {{ $action }}
-                            </option>
-                        @endforeach
-                    </select>
+
+                {{-- Action --}}
+                <div class="form-group">
+                    <label class="form-label" for="action">Action <span class="text-danger">*</span></label>
+                    <input type="text"
+                           class="form-control @error('action') is-invalid @enderror"
+                           id="action"
+                           name="action"
+                           value="{{ old('action') }}"
+                           placeholder="Masukkan action">
                     @error('action')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+                {{-- Info --}}
+                <div class="form-group">
+                    <label class="form-label" for="info">Info</label>
+                    <input type="text"
+                           class="form-control @error('info') is-invalid @enderror"
+                           id="info"
+                           name="info"
+                           value="{{ old('info') }}"
+                           placeholder="Masukkan info">
+                    @error('info')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
             </div>
-        </div>
 
-        <div class="mb-3">
-            <label class="form-label">Info</label>
-            <textarea class="form-control @error('info') is-invalid @enderror" 
-                      name="info" rows="3" placeholder="Masukkan informasi tambahan">{{ old('info') }}</textarea>
-            @error('info')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-            <small class="text-muted">Opsional, bisa diisi deskripsi permission</small>
-        </div>
+            {{-- Footer --}}
+            <div class="form-footer">
+                <a href="{{ url('manajemen/user-permission') }}" class="btn btn-kembali">Kembali</a>
+                <button type="submit" class="btn btn-simpan">Simpan</button>
+            </div>
 
-       
-
-        <hr class="my-4">
-
-        <div class="d-flex justify-content-end gap-2">
-            <a href="{{ url('/manajemen/user-permission') }}" class="btn btn-batal">
-                <i class="bi bi-x-circle me-2"></i>Batal
-            </a>
-            <button type="submit" class="btn btn-simpan">
-                <i class="bi bi-check-circle me-2"></i>Simpan
-            </button>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 @endsection

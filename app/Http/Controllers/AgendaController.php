@@ -33,7 +33,7 @@ class AgendaController extends Controller
         $perPage = $request->input('per_page', 10);
 
         $agendas = $query
-            ->orderBy('tanggal_mulai', 'desc')
+            ->orderBy('tanggal_awal', 'desc')
             ->paginate($perPage);
 
         // Total data
@@ -78,8 +78,8 @@ class AgendaController extends Controller
             'alamat' => 'nullable|string',
             'disposisi' => 'required|string|max:100',
             'seragam' => 'nullable|string|max:100',
-            'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+            'tanggal_awal' => 'required|date',
+            'tanggal_akhir' => 'nullable|date|after_or_equal:tanggal_awal',
             'status_selesai' => 'nullable|boolean',
             'sifat_agenda' => 'required|in:publik,privat',
             'lampiran' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048'
@@ -96,8 +96,8 @@ class AgendaController extends Controller
             $validated['status'] = 'selesai';
         } else {
             $validated['status'] = $this->getStatusAgenda(
-                $validated['tanggal_mulai'],
-                $validated['tanggal_selesai'] ?? null
+                $validated['tanggal_awal'],
+                $validated['tanggal_akhir'] ?? null
             );
         }
 
@@ -123,8 +123,8 @@ class AgendaController extends Controller
             'alamat' => 'nullable|string',
             'disposisi' => 'required|string|max:100',
             'seragam' => 'nullable|string|max:100',
-            'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+            'tanggal_awal' => 'required|date',
+            'tanggal_akhir' => 'nullable|date|after_or_equal:tanggal_awal',
             'status_selesai' => 'nullable|boolean',
             'sifat_agenda' => 'required|in:publik,privat',
             'lampiran' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048'
@@ -157,8 +157,8 @@ class AgendaController extends Controller
             $validated['status'] = 'selesai';
         } else {
             $validated['status'] = $this->getStatusAgenda(
-                $validated['tanggal_mulai'],
-                $validated['tanggal_selesai'] ?? null
+                $validated['tanggal_awal'],
+                $validated['tanggal_akhir'] ?? null
             );
         }
 
@@ -207,11 +207,11 @@ public function trash()
         $query = Agenda::query();
 
         if ($startDate) {
-            $query->whereDate('tanggal_mulai', '>=', $startDate);
+            $query->whereDate('tanggal_awal', '>=', $startDate);
         }
 
         if ($endDate) {
-            $query->whereDate('tanggal_mulai', '<=', $endDate);
+            $query->whereDate('tanggal_awal', '<=', $endDate);
         }
 
         $agendas = $query->get();

@@ -12,15 +12,15 @@ class DashboardController extends Controller
         $now = Carbon::now();
 
         // Agenda Hari Ini
-        $todayAgendas = Agenda::whereDate('tanggal_mulai', $now->toDateString())->count();
+        $todayAgendas = Agenda::whereDate('tanggal_awal', $now->toDateString())->count();
 
         // Agenda Bulan Ini
-        $monthAgendas = Agenda::whereMonth('tanggal_mulai', $now->month)
-            ->whereYear('tanggal_mulai', $now->year)
+        $monthAgendas = Agenda::whereMonth('tanggal_awal', $now->month)
+            ->whereYear('tanggal_awal', $now->year)
             ->count();
 
         // Agenda Tahun Ini
-        $yearAgendas = Agenda::whereYear('tanggal_mulai', $now->year)->count();
+        $yearAgendas = Agenda::whereYear('tanggal_awal', $now->year)->count();
 
         // Total Agenda
         $totalAgendas = Agenda::count();

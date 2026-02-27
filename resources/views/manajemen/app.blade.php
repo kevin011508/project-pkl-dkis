@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Tambahkan ini di bawah Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #3943ae;
@@ -59,7 +61,6 @@
         
         .sidebar a {
             color: #ecf0f1;
-
             text-decoration: none;
             padding: 12px 20px;
             display: block;
@@ -100,7 +101,7 @@
             margin-left: 250px;
             padding: 20px;
             margin-top: 56px;
-            min-height: calc(100vh - 56px);
+            min-height: calc(100vh - 56px - 50px);
             width: calc(100% - 250px);
             transition: margin-left 0.3s;
         }
@@ -256,14 +257,28 @@
             background-color: #ffc107;
             color: #212529;
         }
-        .sidebar::-webkit-scrollbar {
-    width: 6px;
-}
 
-.sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.3);
-    border-radius: 10px;
-}
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+        }
+
+        .site-footer {
+            margin-left: 250px;
+            background-color: #2741a7;
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        .site-footer p {
+            color: white;
+            margin: 0;
+            font-size: 14px;
+        }
         
         /* Responsive */
         @media (max-width: 992px) {
@@ -290,39 +305,43 @@
             .main-content {
                 margin-left: 70px;
             }
+
+            .site-footer {
+                margin-left: 70px;
+            }
             
             .sidebar:hover + .main-content {
                 margin-left: 250px;
             }
         }
+
         .sidebar hr {
-    opacity: 0.2;
-}
+            opacity: 0.2;
+        }
 
-.sidebar .collapse a {
-    font-size: 0.95rem;
-    padding-left: 40px;
-}
-.dropdown-menu-custom {
-    display: none;
-    list-style: none;
-    padding-left: 0;
-}
+        .sidebar .collapse a {
+            font-size: 0.95rem;
+            padding-left: 40px;
+        }
 
-.sidebar-dropdown.open .dropdown-menu-custom {
-    display: block;
-}
+        .dropdown-menu-custom {
+            display: none;
+            list-style: none;
+            padding-left: 0;
+        }
 
-.sidebar-dropdown .arrow {
-    float: right;
-    transition: transform 0.3s;
-}
+        .sidebar-dropdown.open .dropdown-menu-custom {
+            display: block;
+        }
 
-.sidebar-dropdown.open .arrow {
-    transform: rotate(180deg);
-}
+        .sidebar-dropdown .arrow {
+            float: right;
+            transition: transform 0.3s;
+        }
 
-
+        .sidebar-dropdown.open .arrow {
+            transform: rotate(180deg);
+        }
         
         @media (max-width: 768px) {
             .sidebar {
@@ -336,6 +355,10 @@
             }
             
             .main-content {
+                margin-left: 0;
+            }
+
+            .site-footer {
                 margin-left: 0;
             }
             
@@ -383,14 +406,14 @@
         <div class="d-flex align-items-center ms-auto">
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" 
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person me-1"></i> Profile
-                    </a>
+                    <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" 
+                         href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle fs-5"></i>
+                        <span>{{ auth()->user()->username }}</span>
+                        </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                         <li><a class="dropdown-item" href="/profile"><i class="bi bi-pencil-square me-2"></i> Edit Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <!-- Logout menggunakan form POST Laravel -->
                         <li>
                             <a class="dropdown-item text-danger" href="#"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -404,7 +427,6 @@
     </div>
 </nav>
 
-<!-- Form Logout Laravel -->
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
     @csrf
 </form>
@@ -412,8 +434,8 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-<div id="sidebar" class="sidebar">
-                <h5 class="text-center px-3 mb-2">Menu Utama</h5>
+        <div id="sidebar" class="sidebar">
+            <h5 class="text-center px-3 mb-2">Menu Utama</h5>
             <a href="{{ route('manajemen.dashboard') }}" class="active">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
@@ -423,7 +445,7 @@
 
             <li class="menu-title">MANAJEMEN</li>
 
-            <li id="sidebarToggle"class="sidebar-dropdown">
+            <li id="sidebarToggle" class="sidebar-dropdown">
                 <a href="#" class="dropdown-toggle">
                     <span>
                         <i class="bi bi-people"></i> User
@@ -431,10 +453,11 @@
                     </span>
                 </a>
                 <ul class="dropdown-menu-custom"> 
-                     <li> <a href="{{ url('manajemen/user-skpd') }}">User SKPD</a></li> 
+                    <li><a href="{{ url('manajemen/user-skpd') }}">User SKPD</a></li> 
                     <li><a href="{{ url('manajemen/user-non-skpd') }}">User Non SKPD</a></li> 
                     <li><a href="{{ url('manajemen/user-groups') }}">User Group</a></li>  
-                    <li><a href="{{ url('manajemen/user-permission') }}">User Permission</a></li> </ul>
+                    <li><a href="{{ url('manajemen/user-permission') }}">User Permission</a></li>
+                </ul>
             </li>
             <li class="sidebar-dropdown">
                 <a href="#" class="dropdown-toggle">
@@ -449,8 +472,6 @@
                 </ul>
             </li>
 
-          
-
             <li>
                 <a href="/manajemen/pengaturan">
                     <i class="bi bi-gear"></i> Pengaturan
@@ -464,88 +485,89 @@
             </div>
         </div>
 
-
- 
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-        <!-- Flash Messages -->
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        
-        @yield('content')
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Flash Messages -->
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            
+            @yield('content')
+        </div>
     </div>
-    
-    <!-- Bootstrap 5 JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Toggle sidebar for mobile
-            const sidebarToggle = document.getElementById('sidebarToggle');
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <p>Hak Cipta Pemerintah Kota Cirebon - 2025 - 2026</p>
+</footer>
+
+<!-- Bootstrap 5 JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+        }
+        
+        document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
             
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('show');
-                });
+            if (!sidebar || !sidebarToggle) return;
+            
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnToggle = sidebarToggle.contains(event.target);
+            
+            if (window.innerWidth <= 768 && !isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
             }
-            
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', function(event) {
-                const sidebar = document.getElementById('sidebar');
-                const sidebarToggle = document.getElementById('sidebarToggle');
-                
-                if (!sidebar || !sidebarToggle) return;
-                
-                const isClickInsideSidebar = sidebar.contains(event.target);
-                const isClickOnToggle = sidebarToggle.contains(event.target);
-                
-                if (window.innerWidth <= 768 && !isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('show')) {
-                    sidebar.classList.remove('show');
+        });
+        
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        sidebar.classList.remove('show');
+                    }
                 }
             });
-            
-            // Auto-hide sidebar on mobile when clicking menu item
-            document.querySelectorAll('.sidebar a').forEach(link => {
-                link.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        const sidebar = document.getElementById('sidebar');
-                        if (sidebar) {
-                            sidebar.classList.remove('show');
-                        }
-                    }
-                });
-            });
-            
-            // Auto-dismiss alerts after 5 seconds
-            setTimeout(function() {
-                const alerts = document.querySelectorAll('.alert');
-                alerts.forEach(alert => {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                });
-            }, 5000);
         });
-        document.querySelectorAll('.sidebar-dropdown > a').forEach(function(menu) {
-    menu.addEventListener('click', function(e) {
-        e.preventDefault();
-
-        const parent = this.parentElement;
-        parent.classList.toggle('open');
+        
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
     });
-});
-    </script>
-    @stack('scripts')
+
+    document.querySelectorAll('.sidebar-dropdown > a').forEach(function(menu) {
+        menu.addEventListener('click', function(e) {
+            e.preventDefault();
+            const parent = this.parentElement;
+            parent.classList.toggle('open');
+        });
+    });
+</script>
+@stack('scripts')
 </body>
-</html> 
+</html>

@@ -1,4 +1,7 @@
-@extends('layouts.app')
+@php   
+   $layout = auth()->user()->role === 'superadmin' ? 'manajemen.app' : 'layouts.app';
+@endphp
+@extends($layout)
 
 @section('title', 'Tambah Agenda Baru - ISUN')
 
@@ -142,21 +145,21 @@
                 <!-- Tanggal & Waktu -->
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <label for="tanggal_mulai" class="form-label fw-semibold">
+                        <label for="tanggal_awal" class="form-label fw-semibold">
                             Tanggal & Waktu Mulai <span class="text-danger">*</span>
                         </label>
-                        <input type="datetime-local" class="form-control @error('tanggal_mulai') is-invalid @enderror" 
-                               id="tanggal_mulai" name="tanggal_mulai" 
-                               value="{{ old('tanggal_mulai') }}" required>
-                        @error('tanggal_mulai')
+                        <input type="datetime-local" class="form-control @error('tanggal_awal') is-invalid @enderror" 
+                               id="tanggal_awal" name="tanggal_awal" 
+                               value="{{ old('tanggal_awal') }}" required>
+                        @error('tanggal_awal')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <label for="tanggal_selesai" class="form-label fw-semibold">Tanggal & Waktu Selesai</label>
-                        <input type="datetime-local" class="form-control @error('tanggal_selesai') is-invalid @enderror" 
-                               id="tanggal_selesai" name="tanggal_selesai" 
-                               value="{{ old('tanggal_selesai') }}">
+                        <label for="tanggal_akhir" class="form-label fw-semibold">Tanggal & Waktu Selesai</label>
+                        <input type="datetime-local" class="form-control @error('tanggal_akhir') is-invalid @enderror" 
+                               id="tanggal_akhir" name="tanggal_akhir" 
+                               value="{{ old('tanggal_akhir') }}">
                         <div class="form-check mt-3">
                             <input class="form-check-input" type="checkbox" 
                                    id="status_selesai" name="status_selesai" value="1"
@@ -165,7 +168,7 @@
                                 <i class="bi bi-check-circle me-1"></i> Tandai sebagai selesai
                             </label>
                         </div>
-                        @error('tanggal_selesai')
+                        @error('tanggal_akhir')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -240,7 +243,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Auto-set tanggal minimal untuk mulai adalah hari ini
     const today = new Date().toISOString().slice(0, 16);
-    const tanggalMulaiInput = document.getElementById('tanggal_mulai');
+    const tanggalMulaiInput = document.getElementById('tanggal_awal');
     
     if (tanggalMulaiInput && !tanggalMulaiInput.value) {
         tanggalMulaiInput.min = today;
@@ -248,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Jika tanggal selesai diisi, set minimal = tanggal mulai
-    const tanggalSelesaiInput = document.getElementById('tanggal_selesai');
+    const tanggalSelesaiInput = document.getElementById('tanggal_akhir');
     if (tanggalSelesaiInput) {
         tanggalMulaiInput.addEventListener('change', function() {
             tanggalSelesaiInput.min = this.value;

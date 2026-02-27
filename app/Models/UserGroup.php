@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserGroup extends Model
 {
-    protected $fillable = [
-    'nama',
-    'deskripsi',
-    'status',
-    'member_count'
-];
+    protected $table = 'user_group'; // sesuai database
 
+    protected $fillable = [
+        'name',
+        'permission',
+        'level',
+        'created_by',
+        'updated_by'
+    ];
 }

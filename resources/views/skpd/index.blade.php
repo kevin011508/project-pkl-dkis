@@ -37,7 +37,7 @@
         .btn-tambah i {
             margin-right: 8px;
             font-size: 16px;
-            color: #007bff;             
+            color: #ffffff;             
         }
         
         .btn-tambah:hover {
@@ -87,9 +87,9 @@
                 </div>
                 
                 <div class="btn-kanan">
-                    <a href="{{ route('manajemen.skpd.create') }}" class="btn-tambah">
-                        <i class="fas fa-plus"></i> Tambah
-                    </a>
+                     <a href="{{ url('/manajemen/user-skpd/create') }}" class="btn-tambah">
+            <i class="bi bi-plus-circle me-2"></i>Tambahkan
+        </a>
                 </div>
             </div>
             

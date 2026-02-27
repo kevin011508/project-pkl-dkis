@@ -10,11 +10,13 @@ class UserSkpd extends Model
 {
     use HasFactory;
 
-    protected $table = 'user_skpd';
+   protected $table = 'crb_skpd';
 
-    protected $fillable = [
-        'username',
-        'user_group',
-        'skpd',
-    ];
+protected $fillable = [
+    'username',
+    'password',
+    'user_group',
+    'skpd',
+    'terkunci',
+];
 }

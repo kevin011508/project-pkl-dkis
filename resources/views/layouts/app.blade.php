@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'ISUN')</title>
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #3943ae;
@@ -96,8 +95,9 @@
         .main-content {
             margin-left: 250px;
             padding: 20px;
+            padding-bottom: 60px;
             margin-top: 56px;
-            min-height: calc(100vh - 56px);
+            min-height: calc(100vh - 56px - 50px);
             transition: margin-left 0.3s;
         }
         
@@ -217,14 +217,6 @@
             max-width: 300px;
         }
         
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #dee2e6;
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-        
         .navbar {
             position: fixed;
             top: 0;
@@ -252,6 +244,23 @@
             background-color: #ffc107;
             color: #212529;
         }
+
+        .site-footer {
+            background-color: #2741a7;
+            text-align: center;
+            padding: 15px 0;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 250px;
+            z-index: 999;
+        }
+
+        .site-footer p {
+            color: white;
+            margin: 0;
+            font-size: 14px;
+        }
         
         /* Responsive */
         @media (max-width: 992px) {
@@ -278,6 +287,10 @@
             .main-content {
                 margin-left: 70px;
             }
+
+            .site-footer {
+                left: 70px;
+            }
             
             .sidebar:hover + .main-content {
                 margin-left: 250px;
@@ -297,6 +310,10 @@
             
             .main-content {
                 margin-left: 0;
+            }
+
+            .site-footer {
+                left: 0;
             }
             
             .table-header {
@@ -334,17 +351,41 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav id="navbar" class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <button class="navbar-toggler mobile-menu-btn" type="button" id="sidebarToggle">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <a class="navbar-brand" href="{{ route('agenda.index') }}">
-                <i class=></i>ISUN
-            </a>
+<nav id="navbar" class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler mobile-menu-btn" type="button" id="sidebarToggle">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <a class="navbar-brand" href="{{ route('agenda.index') }}">ISUN</a>
+
+        <div class="ms-auto d-flex align-items-center">
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2"
+                   href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle fs-5"></i>
+                    <span>{{ auth()->user()->username }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="{{ route('profile') }}">
+                            <i class="bi bi-person me-2"></i> Edit Profile
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-danger">
+                                <i class="bi bi-box-arrow-right me-2"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </nav>
+    </div>
+</nav>
     
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -365,17 +406,19 @@
     </a>
 @endif
 
-             
-<!-- Di sidebar -->
 <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">
     <i class="bi bi-calendar-check"></i> <span>Agenda</span>
 </a>
+            <div class="mt-2 px-3">
+                <button class="btn btn-outline-light w-100 display-toggle">
+                    <i class="fas fa-desktop me-2"></i> Buka Display
+                </button>
+            </div>
         </div>
     </div>
     
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
-        <!-- Flash Messages -->
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
@@ -392,13 +435,17 @@
         
         @yield('content')
     </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>Hak Cipta Pemerintah Kota Cirebon - 2025 - 2026</p>
+    </footer>
     
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Toggle sidebar for mobile
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
             
@@ -408,7 +455,6 @@
                 });
             }
             
-            // Close sidebar when clicking outside on mobile
             document.addEventListener('click', function(event) {
                 const sidebar = document.getElementById('sidebar');
                 const sidebarToggle = document.getElementById('sidebarToggle');
@@ -423,7 +469,6 @@
                 }
             });
             
-            // Auto-hide sidebar on mobile when clicking menu item
             document.querySelectorAll('.sidebar a').forEach(link => {
                 link.addEventListener('click', function() {
                     if (window.innerWidth <= 768) {
@@ -435,7 +480,6 @@
                 });
             });
             
-            // Auto-dismiss alerts after 5 seconds
             setTimeout(function() {
                 const alerts = document.querySelectorAll('.alert');
                 alerts.forEach(alert => {
@@ -447,4 +491,4 @@
     </script>
     @stack('scripts')
 </body>
-</html> 
+</html>

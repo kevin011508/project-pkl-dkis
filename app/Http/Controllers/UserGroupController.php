@@ -7,78 +7,86 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\UserGroup;
 
-
 class UserGroupController extends Controller
 {
-
-public function show($id)
-{
-    $group = \App\Models\UserGroup::findOrFail($id);
-
-    return view('user-groups.show', compact('group'));
-}
     public function index()
     {
         $groups = UserGroup::latest()->paginate(10);
         return view('user-groups.index', compact('groups'));
     }
 
-    public function create()
+    public function show($id)
     {
-        $usergroups = ['Admin Setda', 'Operator', 'Administrator', 'Viewer', 'Guest'];
-        return view('user-groups.create', compact('usergroups'));
+        $group = UserGroup::findOrFail($id);
+        return view('user-groups.show', compact('group'));
     }
 
-   public function store(Request $request)
-{
-    $request->validate([
-        'nama' => 'required|string|max:255',
-        'deskripsi' => 'nullable|string'
-    ]);
+    public function create()
+    {
+        return view('user-groups.create');
+    }
 
-    UserGroup::create([
-        'nama' => $request->nama,
-        'deskripsi' => $request->deskripsi,
-        'status' => 'Active', // optional default
-        'member_count' => 0   // optional default
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'permission' => 'required|string',
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'name.max' => 'Nama maksimal 100 karakter.',
+            'permission.required' => 'permission wajib dipilih.',
+        ]);
 
-    return redirect('/manajemen/user-groups')
-        ->with('success', 'User group berhasil ditambahkan');
-}
+        UserGroup::create([
+            'name' => $request->name,
+            'permission' => $request->permission,
+            'level' => 1,
+            'created_by' => auth()->id(),
+        ]);
+
+        return redirect('/manajemen/user-groups')
+            ->with('success', 'User group berhasil ditambahkan');
+    }
 
     public function edit($id)
     {
-        $user = UserGroup::findOrFail($id);
-        $userGroups = ['Admin Setda', 'Operator', 'Administrator', 'Viewer', 'Guest'];
-        return view('user-groups.edit', compact('user', 'userGroups'));
+        $group = UserGroup::findOrFail($id);
+        return view('user-groups.edit', compact('group'));
     }
 
-   public function update(Request $request, $id)
-{
-    $user = UserGroup::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $group = UserGroup::findOrFail($id);
 
-    $request->validate([
-        'nama' => 'required|string|max:255',
-        'deskripsi' => 'nullable|string'
-    ]);
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'permission' => 'required|string',
+            'level' => 'required|integer',
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'name.max' => 'Nama maksimal 100 karakter.',
+            'permission.required' => 'Izin wajib dipilih.',
+            'level.required' => 'Level wajib diisi.',
+            'level.integer' => 'Level harus berupa angka.',
+        ]);
 
-    $user->update([
-        'nama' => $request->nama,
-        'deskripsi' => $request->deskripsi,
-    ]);
+        $group->update([
+            'name' => $request->name,
+            'permission' => $request->permission,
+            'level' => $request->level,
+            'updated_by' => auth()->id(),
+        ]);
 
-    return redirect('/manajemen/user-groups')
-        ->with('success', 'User group berhasil diupdate');
-}
+        return redirect('/manajemen/user-groups')
+            ->with('success', 'User group berhasil diupdate');
+    }
 
     public function destroy($id)
     {
-        $user = UserGroup::findOrFail($id);
-        $user->delete();
+        $group = UserGroup::findOrFail($id);
+        $group->delete();
 
         return redirect('/manajemen/user-groups')
-            ->with('success', 'User groups berhasil dihapus');
+            ->with('success', 'User group berhasil dihapus');
     }
-
 }

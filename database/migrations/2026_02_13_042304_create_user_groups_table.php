@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_groups', function (Blueprint $table) {
-        $table->id();
-        $table->string('nama');
-        $table->text('deskripsi')->nullable();
-        $table->string('status');
-        $table->integer('member_count')->default(0);
-        $table->timestamps();
-    });
+        Schema::create('user_group', function (Blueprint $table) {
+            $table->increments('id');                        // int UNSIGNED AUTO_INCREMENT PRIMARY KEY
+            $table->string('name', 100);                     // varchar(100) NOT NULL
+            $table->text('permission');                      // text NOT NULL
+            $table->tinyInteger('level');                    // tinyint NOT NULL
+            $table->timestamp('created_at')->nullable();     // timestamp NULL
+            $table->timestamp('updated_at')->nullable();     // timestamp NULL
+            $table->unsignedInteger('created_by')->nullable(); // int UNSIGNED NULL
+            $table->unsignedInteger('updated_by')->nullable(); // int UNSIGNED NULL
+        });
     }
 
     /**
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_groups');
+        Schema::dropIfExists('user_group');
     }
 };
