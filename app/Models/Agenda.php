@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Agenda extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
+    
 
     protected $table = 'agenda';
     
@@ -27,15 +27,26 @@ class Agenda extends Model
     'lampiran',
     'created_by',
     'updated_by',
+    'deleted_by',
     'is_locked'
 ];
 
-protected $casts = [
+    protected $casts = [
     'tanggal_awal' => 'datetime',
     'tanggal_akhir' => 'datetime',
+    'deleted_at' => 'datetime',  
+    'is_locked' => 'boolean',
 ];
 
-protected $dates = ['deleted_at', 'tanggal_awal'];}
+       public function deletedByUser()
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+
+}
+
+
 
  
 

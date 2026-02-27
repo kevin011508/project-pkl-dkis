@@ -6,6 +6,7 @@ use App\Models\Agenda;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class AgendaController extends Controller
 {
@@ -169,32 +170,78 @@ class AgendaController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage (Soft Delete).
      */
-    public function destroy($id)
-{
-    $agenda = Agenda::findOrFail($id);
-    $agenda->delete(); // INI SOFT DELETE
+   public function destroy($id)
+    {
+        $agenda = Agenda::findOrFail($id);
+
+        $agenda->deleted_by = Auth::user()->id;
+        $agenda->save(); 
+        $agenda->delete();
+
     return redirect()->route('agenda.index')
-        ->with('success', 'Agenda berhasil dihapus');
-}
-        //untuk restore data yang dihapus
-   public function restore($id)
-{
-    $agenda = Agenda::withTrashed()->findOrFail($id);
-    $agenda->restore();
+        ->with('success', 'Agenda berhasil dihapus.');
+    }
 
-    return redirect()->route('agenda.trash')
-        ->with('success', 'Agenda berhasil direstore');
-}
+    /**
+     * Restore soft deleted agenda
+     */
+    public function restore($id)
+    {
+        $agenda = Agenda::withTrashed()->findOrFail($id);
+        $agenda->restore();
 
-    //trash
-public function trash()
-{
-    $agendas = Agenda::onlyTrashed()->paginate(10);
-    return view('agenda.trash', compact('agendas'));
-}
+        return redirect()->route('agenda.trash')
+            ->with('success', 'Agenda berhasil direstore');
+    }
 
+    /**
+     * Permanently delete agenda from trash
+     */
+    public function forceDelete($id)
+    {
+        $agenda = Agenda::withTrashed()->findOrFail($id);
+        
+        // Hapus file lampiran jika ada
+        if ($agenda->lampiran) {
+            Storage::disk('public')->delete($agenda->lampiran);
+        }
+        
+        $agenda->forceDelete(); // PERMANENT DELETE
+
+        return redirect()->route('agenda.trash')
+            ->with('success', 'Agenda berhasil dihapus permanen');
+    }
+
+    /**
+     * Permanently delete all agendas from trash
+     */
+    public function forceDeleteAll()
+    {
+        $trashedAgendas = Agenda::onlyTrashed()->get();
+        
+        // Hapus semua file lampiran
+        foreach ($trashedAgendas as $agenda) {
+            if ($agenda->lampiran) {
+                Storage::disk('public')->delete($agenda->lampiran);
+            }
+        }
+        
+        Agenda::onlyTrashed()->forceDelete(); // PERMANENT DELETE ALL
+
+        return redirect()->route('agenda.trash')
+            ->with('success', 'Semua agenda di trash berhasil dihapus permanen');
+    }
+
+    /**
+     * Display trash (soft deleted agendas)
+     */
+    public function trash()
+    {
+        $agendas = Agenda::onlyTrashed()->with('deletedByUser')->paginate(10);
+        return view('agenda.trash', compact('agendas'));
+    }
 
     /**
      * Export rekap agenda
@@ -239,12 +286,14 @@ public function trash()
         }
 
         return 'belum';
-        
     }
-    public function show($id)
-{
-    $agenda = Agenda::findOrFail($id);
-    return view('layouts.show', compact('agenda'));
-}
 
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        $agenda = Agenda::findOrFail($id);
+        return view('layouts.show', compact('agenda'));
+    }
 }

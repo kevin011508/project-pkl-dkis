@@ -442,6 +442,9 @@
             <a href="/agenda">
                 <i class="fas fa-calendar-day"></i> Agenda
             </a>
+            <a href="{{ url('agenda-trash') }}">
+                <i class="fas fa-trash-alt"></i> Trash</a>
+            
 
             <li class="menu-title">MANAJEMEN</li>
 
