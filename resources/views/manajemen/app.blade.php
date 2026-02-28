@@ -523,6 +523,9 @@
                        class="{{ request()->is('manajemen/non-skpd*') ? 'active' : '' }}">Non SKPD</a></li>
             </ul>
         </li>
+            <a href="{{ url('agenda-trash') }}">
+                <i class="fas fa-trash-alt"></i> Trash</a>
+            
 
         {{-- Pengaturan: active hanya kalau sedang di halaman pengaturan --}}
         <li>

@@ -64,9 +64,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/agenda-trash', [AgendaController::class, 'trash'])
         ->name('agenda.trash');
 
-    Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])
-        ->name('agenda.restore');
+    // Restore agenda
+    Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])->name('agenda.restore');
 
+    // Delete permanen
+    Route::delete('/agenda/{id}/force-delete', [AgendaController::class, 'forceDelete'])->name('agenda.force-delete');
+
+    // Delete semua permanen
+    Route::delete('/agenda/force-delete-all', [AgendaController::class, 'forceDeleteAll'])->name('agenda.force-delete-all');
+    
     Route::get('/agenda/export/rekap', [AgendaController::class, 'exportRekap'])
         ->name('agenda.export-rekap');
 

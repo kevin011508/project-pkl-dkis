@@ -23,30 +23,33 @@ class Agenda extends Model
         'penyelenggara',
         'seragam',
         'disposisi',
-        'sifat_agenda',
         'status',
         'lampiran',
         'created_by',
         'updated_by',
-        'is_locked',
+        'deleted_by',
+        'is_locked'
     ];
 
     protected $casts = [
-        'tanggal_awal'  => 'datetime',
+        'tanggal_awal' => 'datetime',
         'tanggal_akhir' => 'datetime',
+        'deleted_at' => 'datetime',
+        'is_locked' => 'boolean',
     ];
 
     protected $dates = ['deleted_at'];
 
+    public function deletedByUser()
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
     /**
      * Accessor: status_realtime
-     * Gunakan $agenda->status_realtime di blade untuk tampilan
-     * yang selalu akurat berdasarkan waktu WIB saat ini,
-     * tanpa perlu mengubah nilai di database.
      */
     public function getStatusRealtimeAttribute(): string
     {
-        // Jika sudah ditandai selesai secara manual, tetap selesai
         if ($this->status === 'selesai') {
             return 'selesai';
         }
