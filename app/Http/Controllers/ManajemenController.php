@@ -42,7 +42,7 @@ class ManajemenController extends Controller
 
     public function pengaturan()
     {
-        return view('manajemen.pengaturan');
+        return view('pengaturan');
     }
 
     

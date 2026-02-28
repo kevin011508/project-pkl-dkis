@@ -126,7 +126,7 @@
     {{-- Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>User Permission</h1>
-         <a href="{{ url('/manajemen/user-skpd/create') }}" class="btn-tambah">
+         <a href="{{ url('/manajemen/user-permission/create') }}" class="btn-tambah">
             <i class="bi bi-plus-circle me-2"></i>Tambahkan
         </a>
     </div>

@@ -19,43 +19,50 @@ class UserNonSkpdController extends Controller
     public function create()
     {
         $userGroups = ['Operator', 'Admin', 'Viewer', 'Guest'];
-        $nonSkpdList = DB::table('non_skpd')->orderBy('nama')->get();
+        // Hanya tampilkan organisasi yang belum punya username
+        $nonSkpdList = UserNonSkpd::whereNull('username')->orderBy('nama')->get();
         return view('user-non-skpd.create', compact('userGroups', 'nonSkpdList'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'username'   => 'required|string|max:255|unique:non_skpd',
+            'username'   => 'required|string|max:255|unique:non_skpd,username',
             'password'   => 'required|string|min:6',
-            'pin'        => 'required|string|max:10',
+            'pin'        => 'required|max:10',
             'user_group' => 'required|string',
-            'non_skpd'   => 'required|string',
+            'non_skpd'   => 'required|exists:non_skpd,id', // ✅ non_skpd berisi id organisasi
             'terkunci'   => 'required|in:0,1',
         ], [
             'username.required'   => 'Username wajib diisi.',
             'username.unique'     => 'Username sudah digunakan.',
-            'username.max'        => 'Username maksimal 255 karakter.',
             'password.required'   => 'Password wajib diisi.',
             'password.min'        => 'Password minimal 6 karakter.',
             'pin.required'        => 'PIN wajib diisi.',
-            'pin.max'             => 'PIN maksimal 10 karakter.',
             'user_group.required' => 'User group wajib dipilih.',
             'non_skpd.required'   => 'Non SKPD wajib dipilih.',
+            'non_skpd.exists'     => 'Organisasi tidak ditemukan.',
             'terkunci.required'   => 'Status terkunci wajib dipilih.',
         ]);
 
-        UserNonSkpd::create([
+        // ✅ Update baris organisasi yang dipilih dengan data user
+        $organisasi = UserNonSkpd::findOrFail($request->non_skpd);
+        $organisasi->update([
             'username'   => $request->username,
             'password'   => Hash::make($request->password),
             'pin'        => $request->pin,
             'user_group' => $request->user_group,
-            'non_skpd'   => $request->non_skpd,
             'terkunci'   => $request->terkunci,
         ]);
 
         return redirect('/manajemen/user-non-skpd')
             ->with('success', 'User Non SKPD berhasil ditambahkan');
+    }
+
+    public function show($id)
+    {
+        $user = UserNonSkpd::findOrFail($id);
+        return view('user-non-skpd.show', compact('user'));
     }
 
     public function edit($id)
@@ -72,18 +79,14 @@ class UserNonSkpdController extends Controller
 
         $request->validate([
             'username'   => 'required|string|max:255|unique:non_skpd,username,' . $id,
-            'pin'        => 'required|string|max:10',
+            'pin'        => 'required|max:10',
             'user_group' => 'required|string',
-            'non_skpd'   => 'required|string',
             'terkunci'   => 'required|in:0,1',
         ], [
             'username.required'   => 'Username wajib diisi.',
             'username.unique'     => 'Username sudah digunakan.',
-            'username.max'        => 'Username maksimal 255 karakter.',
             'pin.required'        => 'PIN wajib diisi.',
-            'pin.max'             => 'PIN maksimal 10 karakter.',
             'user_group.required' => 'User group wajib dipilih.',
-            'non_skpd.required'   => 'Non SKPD wajib dipilih.',
             'terkunci.required'   => 'Status terkunci wajib dipilih.',
         ]);
 
@@ -91,7 +94,6 @@ class UserNonSkpdController extends Controller
             'username'   => $request->username,
             'pin'        => $request->pin,
             'user_group' => $request->user_group,
-            'non_skpd'   => $request->non_skpd,
             'terkunci'   => $request->terkunci,
         ];
 
@@ -108,7 +110,15 @@ class UserNonSkpdController extends Controller
     public function destroy($id)
     {
         $user = UserNonSkpd::findOrFail($id);
-        $user->delete();
+
+        // ✅ Reset kolom user saja, baris organisasi tetap ada
+        $user->update([
+            'username'   => null,
+            'password'   => null,
+            'pin'        => null,
+            'user_group' => null,
+            'terkunci'   => 0,
+        ]);
 
         return redirect('/manajemen/user-non-skpd')
             ->with('success', 'User Non SKPD berhasil dihapus');

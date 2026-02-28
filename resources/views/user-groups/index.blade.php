@@ -10,7 +10,9 @@
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         padding: 25px;
-        margin: 30px 20px;
+        /* PERBAIKAN: hapus margin agar full width mengikuti main-content */
+        margin: 0;
+        width: 100%;
     }
     h1 {
         color: #2c3e50;
@@ -50,14 +52,6 @@
         align-items: center;
         margin-top: 20px;
         color: #6c757d;
-    }
-    .url-bar {
-        margin-top: 30px;
-        padding: 15px;
-        background-color: #e9ecef;
-        border-radius: 8px;
-        font-family: monospace;
-        color: #495057;
     }
     .main-title {
         display: flex;
@@ -119,11 +113,10 @@
 <div class="content-section">
     <div class="main-title">
         <h1>User Groups</h1>
-         <a href="{{ url('/manajemen/user-skpd/create') }}" class="btn-tambah">
+        <a href="{{ url('/manajemen/user-groups/create') }}" class="btn-tambah">
             <i class="bi bi-plus-circle me-2"></i>Tambahkan
         </a>
     </div>
-    
 
     <!-- Filter & Search -->
     <div class="filter-section">
@@ -142,82 +135,79 @@
         </div>
     </div>
 
+    {{-- Tabel --}}
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th width="10%">No</th>
+                <th width="60%">Nama</th>
+                <th width="30%">Aksi</th>
+            </tr>
+        </thead>
 
+        <tbody>
+            @forelse($groups as $group)
+            <tr>
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $group->name }}</td>
+                <td class="text-center align-middle">
 
-{{-- Tabel --}}
-<table class="table table-bordered table-hover">
-    <thead class="table-light">
-        <tr>
-            <th width="10%">No</th>
-            <th width="60%">Nama</th>
-            <th width="30%">Aksi</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @forelse($groups as $group)
-        <tr>
-            <td>{{ $loop->iteration }}</td>
-            <td>{{ $group->nama }}</td>
-            <td class="text-center align-middle">
-
-                <a href="{{ route('manajemen.user-groups.show', $group->id) }}" class="btn p-0 border-0 bg-transparent">
-                    <span class="badge bg-primary me-1 p-2">
-                        <i class="bi bi-eye text-white"></i>
-                    </span>
-                </a>
-
-                <a href="{{ route('manajemen.user-groups.edit', $group->id) }}" class="btn p-0 border-0 bg-transparent">
-                    <span class="badge bg-warning me-1 p-2">
-                        <i class="bi bi-pencil text-white"></i>
-                    </span>
-                </a>
-
-                <form action="{{ route('manajemen.user-groups.destroy', $group->id) }}" 
-                      method="POST" 
-                      style="display:inline-block;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn p-0 border-0 bg-transparent"
-                        onclick="return confirm('Hapus data?')">
-                        <span class="badge bg-danger p-2">
-                            <i class="bi bi-trash text-white"></i>
+                    <a href="{{ route('manajemen.user-groups.show', $group->id) }}" class="btn p-0 border-0 bg-transparent">
+                        <span class="badge bg-primary me-1 p-2">
+                            <i class="bi bi-eye text-white"></i>
                         </span>
-                    </button>
-                </form>
+                    </a>
 
-            </td>
-        </tr>
-        @empty
-        <tr>
-            <td colspan="3" class="text-center">Tidak ada data</td>
-        </tr>
-        @endforelse
-    </tbody>
+                    <a href="{{ route('manajemen.user-groups.edit', $group->id) }}" class="btn p-0 border-0 bg-transparent">
+                        <span class="badge bg-warning me-1 p-2">
+                            <i class="bi bi-pencil text-white"></i>
+                        </span>
+                    </a>
 
-</table>
+                    <form action="{{ route('manajemen.user-groups.destroy', $group->id) }}" 
+                          method="POST" 
+                          style="display:inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn p-0 border-0 bg-transparent"
+                            onclick="return confirm('Hapus data?')">
+                            <span class="badge bg-danger p-2">
+                                <i class="bi bi-trash text-white"></i>
+                            </span>
+                        </button>
+                    </form>
 
-{{-- Footer Info --}}
-<div class="d-flex justify-content-between align-items-center mt-3">
-    <span>Menampilkan 1 sampai 3 dari 3 entri</span>
-    
-    {{-- Pagination --}}
-    <nav>
-        <ul class="pagination pagination-sm mb-0">
-            <li class="page-item disabled">
-                <span class="page-link">Sebelumnya</span>
-            </li>
-            <li class="page-item active">
-                <span class="page-link">1</span>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#">Selanjutnya</a>
-            </li>
-        </ul>
-    </nav>
-</div>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="3" class="text-center">Tidak ada data</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
 
-  
+    {{-- Footer Info --}}
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <span>Menampilkan 1 sampai 3 dari 3 entri</span>
+        
+        {{-- Pagination --}}
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item disabled">
+                    <span class="page-link">Sebelumnya</span>
+                </li>
+                <li class="page-item active">
+                    <span class="page-link">1</span>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Selanjutnya</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+</div>{{-- PERBAIKAN: tag penutup </div> content-section yang tadinya hilang --}}
 @endsection
 
 @push('scripts')
@@ -235,7 +225,6 @@
 
     // Entries per page
     document.getElementById('entriesPerPage')?.addEventListener('change', function() {
-        // Implementasi pagination
         console.log('Show entries:', this.value);
     });
 </script>

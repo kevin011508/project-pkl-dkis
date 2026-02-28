@@ -131,7 +131,7 @@
         <div class="login-card">
             <!-- Header -->
             <div class="login-header">
-                <img src="{{ asset('img/logo cirebon.png') }}" 
+                <img src="{{ asset('img/logo-cirebon.png') }}" 
                 alt="Logo" 
                 style="width: 115px; height: auto; margin-bottom: 15px;">
                 <h1>ISUN</h1>

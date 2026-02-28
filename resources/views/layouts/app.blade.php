@@ -91,6 +91,31 @@
             font-weight: 600;
             margin: 0;
         }
+
+        .btn-display {
+            display: block;
+            border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+            border-left: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+            border-radius: 8px;
+            padding: 10px 15px !important;
+            color: white !important;
+            text-decoration: none;
+            margin: 10px 15px;
+            transition: all 0.3s;
+        }
+
+        .btn-display:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1.5px solid white !important;
+            border-left: 1.5px solid white !important;
+            color: white !important;
+        }
+
+        .btn-display.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1.5px solid white !important;
+            border-left: 1.5px solid white !important;
+        }
         
         .main-content {
             margin-left: 250px;
@@ -262,7 +287,6 @@
             font-size: 14px;
         }
         
-        /* Responsive */
         @media (max-width: 992px) {
             .sidebar {
                 width: 70px;
@@ -347,78 +371,85 @@
         }
     </style>
     @stack('styles')
-
 </head>
 <body>
-    <!-- Navbar -->
-<nav id="navbar" class="navbar navbar-expand-lg navbar-dark">
-    <div class="container-fluid">
-        <button class="navbar-toggler mobile-menu-btn" type="button" id="sidebarToggle">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <a class="navbar-brand" href="{{ route('agenda.index') }}">ISUN</a>
 
-        <div class="ms-auto d-flex align-items-center">
-            <div class="dropdown">
-                <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2"
-                   href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-person-circle fs-5"></i>
-                    <span>{{ auth()->user()->username }}</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" href="{{ route('profile') }}">
-                            <i class="bi bi-person me-2"></i> Edit Profile
-                        </a>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="dropdown-item text-danger">
-                                <i class="bi bi-box-arrow-right me-2"></i> Logout
-                            </button>
-                        </form>
-                    </li>
-                </ul>
+    <!-- Navbar -->
+    <nav id="navbar" class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <button class="navbar-toggler mobile-menu-btn" type="button" id="sidebarToggle">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <a class="navbar-brand" href="{{ route('agenda.index') }}">ISUN</a>
+
+            <div class="ms-auto d-flex align-items-center">
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2"
+                       href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle fs-5"></i>
+                        <span>{{ auth()->user()->username }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('profile') }}">
+                                <i class="bi bi-person me-2"></i> Edit Profile
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</nav>
-    
+    </nav>
+
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-content">
             <div class="sidebar-header">
                 <h5 class="sidebar-title">Menu Utama</h5>
             </div>
-            
-          @if(auth()->user()->role == 'superadmin')
-    <a href="{{ route('manajemen.dashboard') }}"
-       class="{{ request()->routeIs('manajemen.dashboard') ? 'active' : '' }}">
-        <i class="bi bi-speedometer2"></i><span>Dashboard</span>
-    </a>
-@else
-    <a href="{{ route('dashboard') }}"
-       class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-        <i class="bi bi-speedometer2"></i><span>Dashboard</span>
-    </a>
-@endif
 
-<a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">
-    <i class="bi bi-calendar-check"></i> <span>Agenda</span>
-</a>
-            <div class="mt-2 px-3">
-                <button class="btn btn-outline-light w-100 display-toggle">
-                    <i class="fas fa-desktop me-2"></i> Buka Display
-                </button>
-            </div>
+            {{-- ✅ PERBAIKAN: Dashboard active hanya kalau sedang di halaman tersebut --}}
+            @if(auth()->user()->role == 'superadmin')
+                <a href="{{ route('manajemen.dashboard') }}"
+                   class="{{ request()->routeIs('manajemen.dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+                </a>
+            @else
+                <a href="{{ route('dashboard') }}"
+                   class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+                </a>
+            @endif
+
+            {{-- ✅ PERBAIKAN: Agenda active hanya kalau sedang di halaman agenda --}}
+            <a href="{{ route('agenda.index') }}"
+               class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">
+                <i class="bi bi-calendar-check"></i> <span>Agenda</span>
+            </a>
+
+            {{-- ✅ PERBAIKAN: Buka Display active hanya kalau sedang di halaman display --}}
+            <a href="{{ route('display') }}"
+               class="btn-display {{ request()->routeIs('display.*') ? 'active' : '' }}">
+                <i class="fas fa-desktop"></i> <span>Buka Display</span>
+            </a>
+
         </div>
     </div>
-    
+    <!-- END Sidebar -->
+
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
+
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
@@ -434,14 +465,16 @@
         @endif
         
         @yield('content')
+
     </div>
+    <!-- END Main Content -->
 
     <!-- Footer -->
     <footer class="site-footer">
         <p>Hak Cipta Pemerintah Kota Cirebon - 2025 - 2026</p>
     </footer>
-    
-    <!-- Bootstrap 5 JS Bundle with Popper -->
+
+    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>

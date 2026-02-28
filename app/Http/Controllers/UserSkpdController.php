@@ -13,14 +13,16 @@ class UserSkpdController extends Controller
 {
     public function index()
     {
-        $users = UserSkpd::latest()->paginate(10);
-        return view('user-skpd.index', compact('users'));
+        $users = UserSkpd::whereNotNull('username')
+        ->orderBy('id', 'asc')
+        ->paginate(10);
+    return view('user-skpd.index', compact('users'));
     }
 
     public function create()
     {
         $userGroups = ['Admin Setda', 'Operator', 'Administrator', 'Viewer', 'Guest'];
-        $skpdList = DB::table('crb_skpd')
+        $skpdList = DB::table('skpd')
             ->where('status_aktif', '1')
             ->orderBy('uraian')
             ->get();
@@ -30,7 +32,7 @@ class UserSkpdController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'username'   => 'required|string|max:255|unique:crb_skpd',
+            'username'   => 'required|string|max:255|unique:skpd,username',
             'password'   => 'required|string|min:6',
             'user_group' => 'required|string',
             'skpd'       => 'required|string',
@@ -62,7 +64,7 @@ class UserSkpdController extends Controller
     {
         $user = UserSkpd::findOrFail($id);
         $userGroups = ['Admin Setda', 'Operator', 'Administrator', 'Viewer', 'Guest'];
-        $skpdList = DB::table('crb_skpd')
+        $skpdList = DB::table('skpd')
             ->where('status_aktif', '1')
             ->orderBy('uraian')
             ->get();
@@ -74,7 +76,7 @@ class UserSkpdController extends Controller
         $user = UserSkpd::findOrFail($id);
 
         $request->validate([
-            'username'   => 'required|string|max:255|unique:crb_skpd,username,' . $id,
+            'username'   => 'required|string|max:255|unique:skpd,username,' . $id,
             'user_group' => 'required|string',
             'skpd'       => 'required|string',
             'terkunci'   => 'required|in:0,1',

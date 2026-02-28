@@ -12,6 +12,8 @@ use App\Http\Controllers\UserNonSkpdController;
 use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\SkpdController;
 use App\Http\Controllers\NonSkpdController;
+use App\Http\Controllers\DisplayController;
+use App\Http\Controllers\PengaturanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +58,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | AGENDA - custom routes HARUS di atas resource
+    | AGENDA
     |--------------------------------------------------------------------------
     */
     Route::get('/agenda-trash', [AgendaController::class, 'trash'])
@@ -90,7 +92,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ManajemenController::class, 'index'])->name('dashboard');
         Route::get('/user', [ManajemenController::class, 'user'])->name('user');
         Route::get('/organisasi', [ManajemenController::class, 'organisasi'])->name('organisasi');
-        Route::get('/pengaturan', [ManajemenController::class, 'pengaturan'])->name('pengaturan');
+
+        // Pengaturan
+        Route::get('/pengaturan',        [PengaturanController::class, 'edit'])   ->name('pengaturan');
+        Route::put('/pengaturan/update', [PengaturanController::class, 'update']) ->name('pengaturan.update');
 
         Route::resource('user-groups', UserGroupController::class);
         Route::resource('skpd', SkpdController::class);
@@ -102,3 +107,10 @@ Route::middleware('auth')->group(function () {
             ->name('user-permission.toggle');
     });
 });
+
+/*
+|--------------------------------------------------------------------------
+| DISPLAY
+|--------------------------------------------------------------------------
+*/
+Route::get('/display', [DisplayController::class, 'index'])->name('display');

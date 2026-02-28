@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Manajemen/UserGroupController.php
 
 namespace App\Http\Controllers;
 
@@ -29,19 +28,19 @@ class UserGroupController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:100',
-            'permission' => 'required|string',
+            'name'        => 'required|string|max:100',
+            'permissions' => 'required|array',
         ], [
-            'name.required' => 'Nama wajib diisi.',
-            'name.max' => 'Nama maksimal 100 karakter.',
-            'permission.required' => 'permission wajib dipilih.',
+            'name.required'        => 'Nama wajib diisi.',
+            'name.max'             => 'Nama maksimal 100 karakter.',
+            'permissions.required' => 'Permission wajib dipilih.',
         ]);
 
         UserGroup::create([
-            'name' => $request->name,
-            'permission' => $request->permission,
-            'level' => 1,
-            'created_by' => auth()->id(),
+            'name'       => $request->name,
+            'permission' => json_encode($request->permissions),
+            'level'      => 1,
+            'created_by' => null,
         ]);
 
         return redirect('/manajemen/user-groups')
@@ -59,22 +58,18 @@ class UserGroupController extends Controller
         $group = UserGroup::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:100',
-            'permission' => 'required|string',
-            'level' => 'required|integer',
+            'name'        => 'required|string|max:100',
+            'permissions' => 'required|array',
         ], [
-            'name.required' => 'Nama wajib diisi.',
-            'name.max' => 'Nama maksimal 100 karakter.',
-            'permission.required' => 'Izin wajib dipilih.',
-            'level.required' => 'Level wajib diisi.',
-            'level.integer' => 'Level harus berupa angka.',
+            'name.required'        => 'Nama wajib diisi.',
+            'name.max'             => 'Nama maksimal 100 karakter.',
+            'permissions.required' => 'Permission wajib dipilih.',
         ]);
 
         $group->update([
-            'name' => $request->name,
-            'permission' => $request->permission,
-            'level' => $request->level,
-            'updated_by' => auth()->id(),
+            'name'       => $request->name,
+            'permission' => json_encode($request->permissions),
+            'updated_by' => null,
         ]);
 
         return redirect('/manajemen/user-groups')

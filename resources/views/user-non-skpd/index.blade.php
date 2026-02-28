@@ -28,11 +28,6 @@
     .table td {
         vertical-align: middle;
     }
-    .entries-selector {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
     .search-box {
         border: 1px solid #dee2e6;
         border-radius: 6px;
@@ -52,14 +47,13 @@
         background-color: #0b5ed7;
         color: white;
     }
-    .action-icons i {
-        margin: 0 8px;
-        color: #6c757d;
-        cursor: pointer;
-        font-size: 18px;
-    }
-    .action-icons i:hover {
-        color: #0d6efd;
+    .badge-pin {
+        background-color: #e9ecef;
+        color: #495057;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-family: monospace;
     }
     .pagination {
         margin-bottom: 0;
@@ -71,41 +65,6 @@
     .page-link {
         color: #0d6efd;
     }
-    .badge-pin {
-        background-color: #e9ecef;
-        color: #495057;
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-weight: 600;
-        font-family: monospace;
-    }
-    .btn-aksi {
-        padding: 5px 10px;
-        margin: 0 3px;
-        border-radius: 5px;
-        color: white;
-        text-decoration: none;
-        display: inline-block;
-    }
-    .btn-edit {
-        background-color: #ffc107;
-    }
-    .btn-hapus {
-        background-color: #dc3545;
-    }
-    .btn-edit:hover, .btn-hapus:hover {
-        opacity: 0.8;
-        color: white;
-    }
-    .icon-link {
-        color: #0d6efd;
-        font-size: 20px;
-        margin: 0 5px;
-        text-decoration: none;
-    }
-    .icon-link:hover {
-        color: #0b5ed7;
-    }
 </style>
 @endpush
 
@@ -114,7 +73,7 @@
     {{-- Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>User Non SKPD</h1>
-          <a href="{{ url('/manajemen/user-skpd/create') }}" class="btn-tambah">
+        <a href="{{ url('/manajemen/user-non-skpd/create') }}" class="btn-tambah">
             <i class="bi bi-plus-circle me-2"></i>Tambahkan
         </a>
     </div>
@@ -151,35 +110,42 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($users as $user)
-                <tr>
-                    <td class="text-center">{{ $loop->iteration }}</td>
-                    <td class="fw-semibold">{{ $user->username }}</td>
-                    <td class="text-center">
-                        <span class="badge bg-info text-dark">{{ $user->user_group }}</span>
-                    </td>
-                    <td>{{ $user->non_skpd }}</td>
-                    <td class="text-center">
-                        <span class="badge-pin">{{ $user->pin }}</span>
-                    </td>
-                    <td class="text-center">
-    <a href="{{ url('/manajemen/user-non-skpd/' . $user->id) }}" class="btn btn-primary btn-sm" title="Detail">
-        <i class="bi bi-eye-fill"></i>
-    </a>
-    <a href="{{ url('/manajemen/user-non-skpd/' . $user->id . '/edit') }}" class="btn btn-warning btn-sm" title="Edit">
-        <i class="bi bi-pencil-fill"></i>
-    </a>
-    <a href="#" class="btn btn-danger btn-sm" title="Hapus" 
-       onclick="event.preventDefault(); if(confirm('Hapus user {{ $user->username }}?')) document.getElementById('delete-form-{{ $user->id }}').submit()">
-        <i class="bi bi-trash-fill"></i>
-    </a>
-    <form id="delete-form-{{ $user->id }}" action="{{ url('/manajemen/user-non-skpd/' . $user->id) }}" method="POST" class="d-none">
-        @csrf
-        @method('DELETE')
-    </form>
-</td>
-                </tr>
-                @empty
+                {{-- ✅ Hanya tampilkan yang sudah punya username --}}
+                @php $ada = false; @endphp
+                @foreach($users as $user)
+                    @if(!is_null($user->username))
+                        @php $ada = true; @endphp
+                        <tr>
+                            <td class="text-center">{{ $loop->iteration }}</td>
+                            <td class="fw-semibold">{{ $user->username }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-info text-dark">{{ $user->user_group }}</span>
+                            </td>
+                            <td>{{ $user->nama }}</td>
+                            <td class="text-center">
+                                <span class="badge-pin">{{ $user->pin }}</span>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ url('/manajemen/user-non-skpd/' . $user->id) }}" class="btn btn-primary btn-sm" title="Detail">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                <a href="{{ url('/manajemen/user-non-skpd/' . $user->id . '/edit') }}" class="btn btn-warning btn-sm" title="Edit">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <a href="#" class="btn btn-danger btn-sm" title="Hapus"
+                                   onclick="event.preventDefault(); if(confirm('Hapus user {{ $user->username }}?')) document.getElementById('delete-form-{{ $user->id }}').submit()">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                                <form id="delete-form-{{ $user->id }}" action="{{ url('/manajemen/user-non-skpd/' . $user->id) }}" method="POST" class="d-none">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
+
+                @if(!$ada)
                 <tr>
                     <td colspan="6" class="text-center py-5">
                         <i class="bi bi-people fs-1 d-block mb-3" style="color: #dee2e6;"></i>
@@ -187,7 +153,7 @@
                         <p style="color: #adb5bd;">Klik tombol "Tambahkan" untuk menambah data</p>
                     </td>
                 </tr>
-                @endforelse
+                @endif
             </tbody>
         </table>
     </div>
@@ -217,18 +183,15 @@
 
 @push('scripts')
 <script>
-    // Search functionality
     document.getElementById('searchInput')?.addEventListener('keyup', function() {
         let searchValue = this.value.toLowerCase();
         let tableRows = document.querySelectorAll('tbody tr');
-        
         tableRows.forEach(row => {
             let username = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
             row.style.display = username.includes(searchValue) ? '' : 'none';
         });
     });
 
-    // Entries per page
     document.getElementById('entriesPerPage')?.addEventListener('change', function() {
         let perPage = this.value;
         window.location.href = '{{ url("/manajemen/user-non-skpd") }}?per_page=' + perPage;

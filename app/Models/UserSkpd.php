@@ -10,7 +10,8 @@ class UserSkpd extends Model
 {
     use HasFactory;
 
-   protected $table = 'crb_skpd';
+   protected $table = 'skpd';
+   public $timestamps = false;
 
 protected $fillable = [
     'username',

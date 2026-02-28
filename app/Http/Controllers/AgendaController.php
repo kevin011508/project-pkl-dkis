@@ -10,41 +10,68 @@ use Carbon\Carbon;
 class AgendaController extends Controller
 {
     /**
+     * Helper: hitung status berdasarkan waktu sekarang (WIB)
+     */
+    private function getStatusAgenda($tanggalMulai, $tanggalSelesai = null): string
+    {
+        $now    = Carbon::now('Asia/Jakarta');
+        $mulai  = Carbon::parse($tanggalMulai)->setTimezone('Asia/Jakarta');
+
+        if ($tanggalSelesai) {
+            $selesai = Carbon::parse($tanggalSelesai)->setTimezone('Asia/Jakarta');
+            if ($now->greaterThan($selesai)) {
+                return 'selesai';
+            }
+        }
+
+        if ($now->greaterThanOrEqualTo($mulai)) {
+            return 'berjalan';
+        }
+
+        return 'belum';
+    }
+
+    /**
      * Display a listing of the resource.
+     * Status di-refresh otomatis setiap kali halaman dibuka.
      */
     public function index(Request $request)
     {
-        // Pencarian
-        $search = $request->input('search');
-
-        // Query dasar
-        $query = Agenda::query();
-
-        // Filter pencarian
-        if ($search) {
-            $query->where('nama_agenda', 'like', "%{$search}%")
-                  ->orWhere('deskripsi', 'like', "%{$search}%")
-                  ->orWhere('lokasi', 'like', "%{$search}%")
-                  ->orWhere('disposisi', 'like', "%{$search}%")
-                  ->orWhere('penyelenggara', 'like', "%{$search}%");
-        }
-
-        // Pagination
+        $search  = $request->input('search');
         $perPage = $request->input('per_page', 10);
 
-        $agendas = $query
-            ->orderBy('tanggal_awal', 'desc')
-            ->paginate($perPage);
+        // ── Auto-update status semua agenda yang belum selesai manual ──
+        // Ambil semua agenda yang status-nya bukan 'selesai' (supaya tidak
+        // menimpa agenda yang sudah ditandai selesai secara manual).
+        Agenda::whereIn('status', ['belum', 'berjalan'])->each(function ($agenda) {
+            $newStatus = $this->getStatusAgenda(
+                $agenda->tanggal_awal,
+                $agenda->tanggal_akhir
+            );
+            if ($agenda->status !== $newStatus) {
+                $agenda->timestamps = false; // jangan ubah updated_at
+                $agenda->status     = $newStatus;
+                $agenda->save();
+            }
+        });
+        // ────────────────────────────────────────────────────────────────
 
-        // Total data
+        $query = Agenda::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_agenda',   'like', "%{$search}%")
+                  ->orWhere('deskripsi',   'like', "%{$search}%")
+                  ->orWhere('lokasi',      'like', "%{$search}%")
+                  ->orWhere('disposisi',   'like', "%{$search}%")
+                  ->orWhere('penyelenggara', 'like', "%{$search}%");
+            });
+        }
+
+        $agendas      = $query->orderBy('tanggal_awal', 'desc')->paginate($perPage);
         $totalAgendas = Agenda::count();
 
-        return view('agenda', compact(
-            'agendas',
-            'totalAgendas',
-            'search',
-            'perPage'
-        ));
+        return view('agenda', compact('agendas', 'totalAgendas', 'search', 'perPage'));
     }
 
     /**
@@ -69,30 +96,28 @@ class AgendaController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi
         $validated = $request->validate([
-            'nama_agenda' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
+            'nama_agenda'   => 'required|string|max:255',
+            'deskripsi'     => 'nullable|string',
             'penyelenggara' => 'nullable|string|max:255',
-            'lokasi' => 'required|string|max:255',
-            'alamat' => 'nullable|string',
-            'disposisi' => 'required|string|max:100',
-            'seragam' => 'nullable|string|max:100',
-            'tanggal_awal' => 'required|date',
+            'lokasi'        => 'required|string|max:255',
+            'alamat'        => 'nullable|string',
+            'disposisi'     => 'required|string|max:100',
+            'seragam'       => 'nullable|string|max:100',
+            'tanggal_awal'  => 'required|date',
             'tanggal_akhir' => 'nullable|date|after_or_equal:tanggal_awal',
-            'status_selesai' => 'nullable|boolean',
-            'sifat_agenda' => 'required|in:publik,privat',
-            'lampiran' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048'
+            'status_selesai'=> 'nullable|boolean',
+            'sifat_agenda'  => 'required|in:publik,privat',
+            'lampiran'      => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
         ]);
 
-        // Handle file upload
         if ($request->hasFile('lampiran')) {
-            $path = $request->file('lampiran')->store('lampiran_agenda', 'public');
-            $validated['lampiran'] = $path;
+            $validated['lampiran'] = $request->file('lampiran')
+                ->store('lampiran_agenda', 'public');
         }
 
-        // Set status
-        if ($request->has('status_selesai') && $request->status_selesai == 1) {
+        // Jika ditandai selesai manual, langsung selesai; kalau tidak, hitung otomatis
+        if ($request->boolean('status_selesai')) {
             $validated['status'] = 'selesai';
         } else {
             $validated['status'] = $this->getStatusAgenda(
@@ -101,7 +126,6 @@ class AgendaController extends Controller
             );
         }
 
-        // Simpan ke database
         Agenda::create($validated);
 
         return redirect()->route('agenda.index')
@@ -114,46 +138,40 @@ class AgendaController extends Controller
     public function update(Request $request, $id)
     {
         $agenda = Agenda::findOrFail($id);
-        
+
         $validated = $request->validate([
-            'nama_agenda' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
+            'nama_agenda'   => 'required|string|max:255',
+            'deskripsi'     => 'nullable|string',
             'penyelenggara' => 'nullable|string|max:255',
-            'lokasi' => 'required|string|max:255',
-            'alamat' => 'nullable|string',
-            'disposisi' => 'required|string|max:100',
-            'seragam' => 'nullable|string|max:100',
-            'tanggal_awal' => 'required|date',
+            'lokasi'        => 'required|string|max:255',
+            'alamat'        => 'nullable|string',
+            'disposisi'     => 'required|string|max:100',
+            'seragam'       => 'nullable|string|max:100',
+            'tanggal_awal'  => 'required|date',
             'tanggal_akhir' => 'nullable|date|after_or_equal:tanggal_awal',
-            'status_selesai' => 'nullable|boolean',
-            'sifat_agenda' => 'required|in:publik,privat',
-            'lampiran' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048'
+            'status_selesai'=> 'nullable|boolean',
+            'sifat_agenda'  => 'required|in:publik,privat',
+            'lampiran'      => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
         ]);
 
         // Handle file upload
         if ($request->hasFile('lampiran')) {
-            // Hapus file lama jika ada
             if ($agenda->lampiran) {
                 Storage::disk('public')->delete($agenda->lampiran);
             }
-            $validated['lampiran'] = $request->file('lampiran')->store('lampiran_agenda', 'public');
-        }
-
-        // Handle hapus lampiran
-        if ($request->has('hapus_lampiran') && $request->hapus_lampiran == 1) {
+            $validated['lampiran'] = $request->file('lampiran')
+                ->store('lampiran_agenda', 'public');
+        } elseif ($request->boolean('hapus_lampiran')) {
             if ($agenda->lampiran) {
                 Storage::disk('public')->delete($agenda->lampiran);
-                $validated['lampiran'] = null;
             }
-        }
-
-        // Jika tidak ada file baru dan tidak menghapus file lama, pertahankan file lama
-        if (!isset($validated['lampiran']) && !$request->has('hapus_lampiran')) {
+            $validated['lampiran'] = null;
+        } else {
             $validated['lampiran'] = $agenda->lampiran;
         }
 
         // Update status
-        if ($request->has('status_selesai') && $request->status_selesai == 1) {
+        if ($request->boolean('status_selesai')) {
             $validated['status'] = 'selesai';
         } else {
             $validated['status'] = $this->getStatusAgenda(
@@ -169,47 +187,51 @@ class AgendaController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage (soft delete).
      */
     public function destroy($id)
-{
-    $agenda = Agenda::findOrFail($id);
-    $agenda->delete(); // INI SOFT DELETE
-    return redirect()->route('agenda.index')
-        ->with('success', 'Agenda berhasil dihapus');
-}
-        //untuk restore data yang dihapus
-   public function restore($id)
-{
-    $agenda = Agenda::withTrashed()->findOrFail($id);
-    $agenda->restore();
+    {
+        $agenda = Agenda::findOrFail($id);
+        $agenda->delete();
 
-    return redirect()->route('agenda.trash')
-        ->with('success', 'Agenda berhasil direstore');
-}
-
-    //trash
-public function trash()
-{
-    $agendas = Agenda::onlyTrashed()->paginate(10);
-    return view('agenda.trash', compact('agendas'));
-}
-
+        return redirect()->route('agenda.index')
+            ->with('success', 'Agenda berhasil dihapus');
+    }
 
     /**
-     * Export rekap agenda
+     * Restore soft-deleted agenda.
+     */
+    public function restore($id)
+    {
+        $agenda = Agenda::withTrashed()->findOrFail($id);
+        $agenda->restore();
+
+        return redirect()->route('agenda.trash')
+            ->with('success', 'Agenda berhasil direstore');
+    }
+
+    /**
+     * Trash list.
+     */
+    public function trash()
+    {
+        $agendas = Agenda::onlyTrashed()->paginate(10);
+        return view('agenda.trash', compact('agendas'));
+    }
+
+    /**
+     * Export rekap agenda.
      */
     public function exportRekap(Request $request)
     {
         $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $endDate   = $request->input('end_date');
 
         $query = Agenda::query();
 
         if ($startDate) {
             $query->whereDate('tanggal_awal', '>=', $startDate);
         }
-
         if ($endDate) {
             $query->whereDate('tanggal_awal', '<=', $endDate);
         }
@@ -220,31 +242,11 @@ public function trash()
     }
 
     /**
-     * Helper method untuk menentukan status agenda
+     * Show detail agenda.
      */
-    private function getStatusAgenda($tanggalMulai, $tanggalSelesai = null)
-    {
-        $now = Carbon::now();
-        $mulai = Carbon::parse($tanggalMulai);
-
-        if ($tanggalSelesai) {
-            $selesai = Carbon::parse($tanggalSelesai);
-            if ($now->greaterThan($selesai)) {
-                return 'selesai';
-            }
-        }
-
-        if ($now->greaterThanOrEqualTo($mulai)) {
-            return 'berjalan';
-        }
-
-        return 'belum';
-        
-    }
     public function show($id)
-{
-    $agenda = Agenda::findOrFail($id);
-    return view('layouts.show', compact('agenda'));
-}
-
+    {
+        $agenda = Agenda::findOrFail($id);
+        return view('layouts.show', compact('agenda'));
+    }
 }
