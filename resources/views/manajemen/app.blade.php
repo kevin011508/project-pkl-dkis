@@ -482,12 +482,15 @@
 
         {{-- Agenda: active hanya kalau sedang di halaman agenda --}}
         <a href="/agenda"
-           class="{{ request()->is('agenda*') ? 'active' : '' }}">
-            <i class="fas fa-calendar-day"></i> Agenda
-        </a>
-
-        <li class="menu-title">MANAJEMEN</li>
-
+        class="{{ request()->is('agenda*') ? 'active' : '' }}">
+        <i class="fas fa-calendar-day"></i> Agenda
+    </a>
+    
+    <a href="{{ url('agenda-trash') }}">
+        <i class="fas fa-trash-alt"></i> Trash</a>
+        
+    <li class="menu-title">MANAJEMEN</li>
+        
         {{-- Dropdown User: otomatis terbuka kalau sedang di sub halaman user --}}
         <li class="sidebar-dropdown {{ request()->is('manajemen/user*') ? 'open' : '' }}">
             <a href="#">
@@ -523,8 +526,7 @@
                        class="{{ request()->is('manajemen/non-skpd*') ? 'active' : '' }}">Non SKPD</a></li>
             </ul>
         </li>
-            <a href="{{ url('agenda-trash') }}">
-                <i class="fas fa-trash-alt"></i> Trash</a>
+        
             
 
         {{-- Pengaturan: active hanya kalau sedang di halaman pengaturan --}}
