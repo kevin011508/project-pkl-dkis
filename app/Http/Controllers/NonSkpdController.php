@@ -68,7 +68,7 @@ class NonSkpdController extends Controller
     {
         $nonSkpd->delete();
         
-        return redirect()->route('non-skpd.index')
+        return redirect()->route('manajemen.non-skpd.index')
                          ->with('success', 'Data Non SKPD berhasil dihapus');
     }
 }

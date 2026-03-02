@@ -64,17 +64,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/agenda-trash', [AgendaController::class, 'trash'])
         ->name('agenda.trash');
 
-    // Restore agenda
-    Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])->name('agenda.restore');
+    Route::put('/agenda/{id}/restore', [AgendaController::class, 'restore'])
+        ->name('agenda.restore');
 
-    // Delete permanen
-    Route::delete('/agenda/{id}/force-delete', [AgendaController::class, 'forceDelete'])->name('agenda.force-delete');
+    Route::delete('/agenda/{id}/force-delete', [AgendaController::class, 'forceDelete'])
+        ->name('agenda.force-delete');
 
-    // Delete semua permanen
-    Route::delete('/agenda/force-delete-all', [AgendaController::class, 'forceDeleteAll'])->name('agenda.force-delete-all');
-    
-    Route::get('/agenda/export/rekap', [AgendaController::class, 'exportRekap'])
-        ->name('agenda.export-rekap');
+    Route::delete('/agenda/force-delete-all', [AgendaController::class, 'forceDeleteAll'])
+        ->name('agenda.force-delete-all');
 
     Route::resource('agenda', AgendaController::class);
 
@@ -86,8 +83,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/rekap', [RekapController::class, 'index'])
         ->name('rekap.index');
 
-    Route::post('/rekap/filter', [RekapController::class, 'filter'])
+    // ✅ Ubah POST → GET
+    Route::get('/rekap/filter', [RekapController::class, 'filter'])
         ->name('rekap.filter');
+
+    Route::get('/rekap/export', [RekapController::class, 'exportRekap'])
+        ->name('rekap.export');
 
     /*
     |--------------------------------------------------------------------------

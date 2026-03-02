@@ -14,8 +14,8 @@
                     <!-- Header dalam card -->
                     <h4 class="fw-bold text-dark mb-4">Rekap Agenda</h4>
 
-                    <form action="{{ route('rekap.filter') }}" method="POST">
-                        @csrf
+                    {{-- method GET, tidak perlu @csrf --}}
+                    <form action="{{ route('rekap.filter') }}" method="GET">
 
                         <div class="mb-3">
                             <label class="form-label text-muted">Tahun</label>
@@ -46,15 +46,16 @@
                             </select>
                         </div>
 
-                        <!-- Kedua tombol sejajar rata kanan -->
+                        <!-- Kedua tombol sejajar -->
                         <div class="d-flex justify-content-between">
-    <a href="{{ url()->previous() ?: route('dashboard') }}" class="btn btn-primary px-4">
-        Kembali
-    </a>
-    <button type="submit" class="btn btn-primary px-4">
-        Pratinjau
-    </button>
-</div>
+                            {{-- ✅ Pakai route('dashboard') langsung, bukan url()->previous() --}}
+                            <a href="{{ route('agenda.index') }}" class="btn btn-secondary px-4">
+    Kembali
+</a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                Pratinjau
+                            </button>
+                        </div>
 
                     </form>
 

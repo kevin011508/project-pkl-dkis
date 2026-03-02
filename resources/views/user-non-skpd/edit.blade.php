@@ -1,171 +1,210 @@
-{{-- resources/views/user-non-skpd/edit.blade.php --}}
 @extends('manajemen.app')
 
-@section('title', 'Edit User Non SKPD')
+@section('title', 'Edit User Non SKPD - ISUN')
 
 @push('styles')
 <style>
-    .content-section {
+    .form-container {
         background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        padding: 25px;
-        margin: 30px 20px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
     }
+
+    .form-body {
+        padding: 30px;
+    }
+
+    .form-footer {
+        padding: 15px 30px;
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
     .form-label {
         font-weight: 500;
         color: #495057;
+        margin-bottom: 6px;
     }
-    .btn-update {
-        background-color: #0d6efd;
+
+    .form-control, .form-select {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .btn-simpan {
+        background-color: var(--secondary-color);
         color: white;
-        padding: 10px 30px;
-        border-radius: 8px;
         border: none;
+        padding: 8px 24px;
+        border-radius: 6px;
         font-weight: 500;
     }
-    .btn-batal {
+
+    .btn-simpan:hover {
+        background-color: #3a5fd9;
+        color: white;
+    }
+
+    .btn-kembali {
         background-color: #6c757d;
         color: white;
-        padding: 10px 30px;
-        border-radius: 8px;
         border: none;
+        padding: 8px 24px;
+        border-radius: 6px;
         font-weight: 500;
     }
-    .info-card {
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        padding: 20px;
-        border-left: 4px solid #ffc107;
+
+    .btn-kembali:hover {
+        background-color: #5a6268;
+        color: white;
     }
 </style>
 @endpush
 
 @section('content')
-<div class="content-section">
-    <div class="d-flex align-items-center mb-4">
-        <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" 
-             style="width: 45px; height: 45px;">
-            <i class="bi bi-pencil-fill text-white fs-5"></i>
-        </div>
-        <div>
-            <h1 class="mb-1">Edit User Non SKPD</h1>
-            <p class="text-muted mb-0">Mengedit user: <strong>{{ $user->username }}</strong></p>
-        </div>
+    <h4 class="page-title">Edit User Non SKPD</h4>
+
+    <div class="form-container">
+        <form action="{{ url('/manajemen/user-non-skpd/' . $user->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="form-body">
+
+                {{-- Username --}}
+                <div class="form-group">
+                    <label class="form-label" for="username">Username <span class="text-danger">*</span></label>
+                    <input type="text"
+                           class="form-control @error('username') is-invalid @enderror"
+                           id="username"
+                           name="username"
+                           value="{{ old('username', $user->username) }}"
+                           placeholder="Masukkan username">
+                    @error('username')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                {{-- Password --}}
+                <div class="form-group">
+                    <label class="form-label" for="password">Password <span class="text-muted fw-normal">(kosongkan jika tidak ingin mengubah)</span></label>
+                    <input type="password"
+                           class="form-control @error('password') is-invalid @enderror"
+                           id="password"
+                           name="password"
+                           placeholder="Masukkan password baru">
+                    @error('password')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                {{-- PIN --}}
+                <div class="form-group">
+                    <label class="form-label" for="pin">PIN <span class="text-danger">*</span></label>
+                    <input type="number"
+                           class="form-control @error('pin') is-invalid @enderror"
+                           id="pin"
+                           name="pin"
+                           value="{{ old('pin', $user->pin) }}"
+                           placeholder="Masukkan PIN">
+                    @error('pin')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                {{-- User Group --}}
+                <div class="form-group">
+                    <label class="form-label" for="user_group">User Group <span class="text-danger">*</span></label>
+                    <select class="form-select @error('user_group') is-invalid @enderror"
+                            id="user_group"
+                            name="user_group">
+                        <option value="" disabled>-- Pilih User Group --</option>
+                        @foreach($userGroups as $group)
+                            <option value="{{ $group }}" {{ old('user_group', $user->user_group) == $group ? 'selected' : '' }}>
+                                {{ $group }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('user_group')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                {{-- Non SKPD (dropdown seperti create) --}}
+                <div class="form-group">
+                    <label class="form-label" for="non_skpd">Non SKPD <span class="text-danger">*</span></label>
+                    <select class="form-select @error('non_skpd') is-invalid @enderror"
+                            id="non_skpd"
+                            name="non_skpd">
+                        <option value="" disabled>-- Pilih Non SKPD --</option>
+                        @foreach($nonSkpdList as $item)
+                            <option value="{{ $item->id }}"
+                                {{ old('non_skpd', $user->id) == $item->id ? 'selected' : '' }}>
+                                {{ $item->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('non_skpd')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                {{-- Terkunci --}}
+                <div class="form-group">
+                    <label class="form-label">Terkunci <span class="text-danger">*</span></label>
+                    <div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio"
+                                   name="terkunci" id="terkunci_tidak"
+                                   value="0" {{ old('terkunci', $user->terkunci) == '0' ? 'checked' : '' }}>
+                            <label class="form-check-label" for="terkunci_tidak">Tidak</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio"
+                                   name="terkunci" id="terkunci_ya"
+                                   value="1" {{ old('terkunci', $user->terkunci) == '1' ? 'checked' : '' }}>
+                            <label class="form-check-label" for="terkunci_ya">Ya</label>
+                        </div>
+                    </div>
+                    @error('terkunci')
+                        <div class="text-danger" style="font-size:0.85rem">{{ $message }}</div>
+                    @enderror
+                </div>
+
+            </div>
+
+            {{-- Footer --}}
+            <div class="form-footer">
+                <a href="{{ url('manajemen/user-non-skpd') }}" class="btn btn-kembali">
+                    Kembali
+                </a>
+                <button type="submit" class="btn btn-simpan">
+                    Update
+                </button>
+            </div>
+
+        </form>
     </div>
-
-    <form action="{{ url('/manajemen/user-non-skpd/' . $user->id) }}" method="POST">
-        @csrf
-        @method('PUT')
-
-        <div class="row">
-            <div class="col-md-8">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Username <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('username') is-invalid @enderror" 
-                                   name="username" value="{{ old('username', $user->username) }}">
-                            @error('username')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">User Group <span class="text-danger">*</span></label>
-                            <select class="form-select @error('user_group') is-invalid @enderror" name="user_group">
-                                @foreach($userGroups as $group)
-                                    <option value="{{ $group }}" {{ old('user_group', $user->user_group) == $group ? 'selected' : '' }}>
-                                        {{ $group }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('user_group')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="mb-3">
-                            <label class="form-label">Non SKPD <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('non_skpd') is-invalid @enderror" 
-                                   name="non_skpd" value="{{ old('non_skpd', $user->non_skpd) }}">
-                            @error('non_skpd')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label class="form-label">PIN <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('pin') is-invalid @enderror" 
-                                   name="pin" value="{{ old('pin', $user->pin) }}">
-                            @error('pin')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label">Status</label>
-                    <div class="d-flex gap-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="status" value="Active" 
-                                   {{ old('status', $user->status) == 'Active' ? 'checked' : '' }}>
-                            <label class="form-check-label">Active</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="status" value="Inactive"
-                                   {{ old('status', $user->status) == 'Inactive' ? 'checked' : '' }}>
-                            <label class="form-check-label">Inactive</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="info-card">
-                    <h6 class="fw-semibold mb-3">
-                        <i class="bi bi-info-circle text-warning me-2"></i>
-                        Informasi
-                    </h6>
-                    <table class="table table-sm table-borderless">
-                        <tr>
-                            <td class="text-muted">ID</td>
-                            <td class="fw-semibold">#{{ $user->id }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Dibuat</td>
-                            <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Diupdate</td>
-                            <td>{{ $user->updated_at->format('d/m/Y H:i') }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">PIN Saat Ini</td>
-                            <td><span class="badge bg-secondary">{{ $user->pin }}</span></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <hr class="my-4">
-
-        <div class="d-flex justify-content-end gap-2">
-            <a href="{{ url('/manajemen/user-non-skpd') }}" class="btn btn-batal">
-                <i class="bi bi-x-circle me-2"></i>Batal
-            </a>
-            <button type="submit" class="btn btn-update">
-                <i class="bi bi-check-circle me-2"></i>Update
-            </button>
-        </div>
-    </form>
-</div>
 @endsection

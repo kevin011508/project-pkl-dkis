@@ -474,24 +474,27 @@
     <div id="sidebar" class="sidebar">
         <h5 class="text-center px-3 mb-2">Menu Utama</h5>
 
-        {{-- Dashboard: active hanya kalau sedang di halaman dashboard --}}
+        {{-- Dashboard --}}
         <a href="{{ route('manajemen.dashboard') }}"
            class="{{ request()->routeIs('manajemen.dashboard') ? 'active' : '' }}">
             <i class="fas fa-tachometer-alt"></i> Dashboard
         </a>
 
-        {{-- Agenda: active hanya kalau sedang di halaman agenda --}}
-        <a href="/agenda"
-        class="{{ request()->is('agenda*') ? 'active' : '' }}">
-        <i class="fas fa-calendar-day"></i> Agenda
-    </a>
-    
-    <a href="{{ url('agenda-trash') }}">
-        <i class="fas fa-trash-alt"></i> Trash</a>
-        
-    <li class="menu-title">MANAJEMEN</li>
-        
-        {{-- Dropdown User: otomatis terbuka kalau sedang di sub halaman user --}}
+        {{-- ✅ Agenda: aktif HANYA di halaman agenda (bukan trash) --}}
+        <a href="{{ route('agenda.index') }}"
+           class="{{ request()->routeIs('agenda.index') || request()->routeIs('agenda.create') || request()->routeIs('agenda.edit') || request()->routeIs('agenda.show') ? 'active' : '' }}">
+            <i class="fas fa-calendar-day"></i> Agenda
+        </a>
+
+        {{-- ✅ Trash: aktif HANYA di halaman trash --}}
+        <a href="{{ route('agenda.trash') }}"
+           class="{{ request()->routeIs('agenda.trash') ? 'active' : '' }}">
+            <i class="fas fa-trash-alt"></i> Trash
+        </a>
+
+        <li class="menu-title">MANAJEMEN</li>
+
+        {{-- Dropdown User --}}
         <li class="sidebar-dropdown {{ request()->is('manajemen/user*') ? 'open' : '' }}">
             <a href="#">
                 <span>
@@ -511,7 +514,7 @@
             </ul>
         </li>
 
-        {{-- Dropdown Organisasi: otomatis terbuka kalau sedang di sub halaman organisasi --}}
+        {{-- Dropdown Organisasi --}}
         <li class="sidebar-dropdown {{ request()->is('manajemen/skpd*') || request()->is('manajemen/non-skpd*') ? 'open' : '' }}">
             <a href="#">
                 <span>
@@ -526,10 +529,8 @@
                        class="{{ request()->is('manajemen/non-skpd*') ? 'active' : '' }}">Non SKPD</a></li>
             </ul>
         </li>
-        
-            
 
-        {{-- Pengaturan: active hanya kalau sedang di halaman pengaturan --}}
+        {{-- Pengaturan --}}
         <li>
             <a href="/manajemen/pengaturan"
                class="{{ request()->is('manajemen/pengaturan*') ? 'active' : '' }}">

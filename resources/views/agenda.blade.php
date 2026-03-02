@@ -13,9 +13,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0 fw-bold">Agenda</h3>
         <div class="d-flex gap-2">
-            <a href="{{ route('agenda.export-rekap') }}" class="btn btn-rekap">
-                <i class="bi bi-pie-chart me-2"></i> Rekap
-            </a>
+            {{-- BARU --}}
+<a href="{{ route('rekap.index') }}" class="btn btn-rekap">
+            <i class="bi bi-pie-chart me-2"></i> Rekap
             <a href="{{ route('agenda.create') }}" class="btn btn-tambah">
                 <i class="bi bi-plus-circle me-2"></i> Tambah
             </a>

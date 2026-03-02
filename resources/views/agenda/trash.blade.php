@@ -5,9 +5,9 @@
 @section('content')
 <h3 class="fw-bold mb-3">Agenda Terhapus</h3>
 
-@if(session('success'))
+{{-- @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
-@endif
+@endif --}}
 
 @if(session('error'))
     <div class="alert alert-danger">{{ session('error') }}</div>

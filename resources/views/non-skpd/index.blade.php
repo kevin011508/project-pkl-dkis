@@ -81,7 +81,7 @@
             </div>
             
             <div>
-                <a href="{{ url('/manajemen/user-skpd/create') }}" class="btn-tambah">
+                <a href="{{ url('/manajemen/non-skpd/create') }}" class="btn-tambah">
             <i class="bi bi-plus-circle me-2"></i>Tambahkan
         </a>    
             </div>

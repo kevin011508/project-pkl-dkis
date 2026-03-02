@@ -76,23 +76,30 @@ class AgendaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_agenda' => 'required',
-            'tanggal_awal' => 'required|date',
-            'tanggal_akhir' => 'nullable|date',
-            'lokasi' => 'required',
-            'sifat_agenda' => 'required|in:publik,privat',
-            'lampiran' => 'nullable|file|max:2048',
+            'nama_agenda'   => 'required|string|max:191',
+            'tanggal_awal'  => 'required|date',
+            'tanggal_akhir' => 'nullable|date|after_or_equal:tanggal_awal',
+            'lokasi'        => 'required|string|max:191',
+            'alamat'        => 'nullable|string',
+            'deskripsi'     => 'nullable|string',
+            'penyelenggara' => 'nullable|string|max:191',
+            'disposisi'     => 'required|string|max:191',
+            'seragam'       => 'nullable|string|max:191',
+            'sifat_agenda'  => 'required|in:publik,privat',
+            'lampiran'      => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
         ]);
 
         if ($request->hasFile('lampiran')) {
-            $validated['lampiran'] =
-                $request->file('lampiran')->store('lampiran_agenda', 'public');
+            $validated['berkas'] = $request->file('lampiran')->store('lampiran_agenda', 'public');
+            unset($validated['lampiran']); // kolom di DB namanya 'berkas'
         }
 
         $validated['status'] = $this->getStatusAgenda(
             $validated['tanggal_awal'],
             $validated['tanggal_akhir'] ?? null
         );
+
+        $validated['created_by'] = Auth::user()->id; // ✅ fix
 
         Agenda::create($validated);
 
@@ -105,12 +112,24 @@ class AgendaController extends Controller
         $agenda = Agenda::findOrFail($id);
 
         $validated = $request->validate([
-            'nama_agenda' => 'required',
-            'tanggal_awal' => 'required|date',
-            'tanggal_akhir' => 'nullable|date',
-            'lokasi' => 'required',
-            'sifat_agenda' => 'required|in:publik,privat',
+            'nama_agenda'   => 'required|string|max:191',
+            'tanggal_awal'  => 'required|date',
+            'tanggal_akhir' => 'nullable|date|after_or_equal:tanggal_awal',
+            'lokasi'        => 'required|string|max:191',
+            'alamat'        => 'nullable|string',
+            'deskripsi'     => 'nullable|string',
+            'penyelenggara' => 'nullable|string|max:191',
+            'disposisi'     => 'required|string|max:191',
+            'seragam'       => 'nullable|string|max:191',
+            'sifat_agenda'  => 'required|in:publik,privat',
         ]);
+
+        $validated['status'] = $this->getStatusAgenda(
+            $validated['tanggal_awal'],
+            $validated['tanggal_akhir'] ?? null
+        );
+
+        $validated['updated_by'] = Auth::user()->id; // ✅ fix
 
         $agenda->update($validated);
 
@@ -122,7 +141,7 @@ class AgendaController extends Controller
     {
         $agenda = Agenda::findOrFail($id);
 
-        $agenda->deleted_by = Auth::id();
+        $agenda->deleted_by = Auth::user()->id; // ✅ fix
         $agenda->save();
 
         $agenda->delete();
@@ -153,8 +172,8 @@ class AgendaController extends Controller
     {
         $agenda = Agenda::withTrashed()->findOrFail($id);
 
-        if ($agenda->lampiran) {
-            Storage::disk('public')->delete($agenda->lampiran);
+        if ($agenda->berkas) {
+            Storage::disk('public')->delete($agenda->berkas);
         }
 
         $agenda->forceDelete();
