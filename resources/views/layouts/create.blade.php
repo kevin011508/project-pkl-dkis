@@ -6,6 +6,9 @@
 @section('title', 'Tambah Agenda Baru - ISUN')
 
 @section('content')
+
+@canDo('agenda', 'tambah')
+
 <div class="container-fluid px-4 py-3">
 
     {{-- Header --}}
@@ -267,10 +270,21 @@
                 </div>
 
             </form>
-        </div>{{-- end card-body --}}
-    </div>{{-- end card --}}
+        </div>
+    </div>
 
-</div>{{-- end container-fluid --}}
+</div>
+
+@else
+    {{-- Tampil pesan jika tidak punya akses tambah --}}
+    <div class="container-fluid px-4 py-3">
+        <div class="alert alert-danger">
+            <i class="bi bi-shield-x me-2"></i> Anda tidak memiliki izin untuk menambah agenda.
+            <a href="{{ route('agenda.index') }}" class="alert-link ms-2">Kembali ke Agenda</a>
+        </div>
+    </div>
+@endCanDo
+
 @endsection
 
 @push('scripts')
@@ -290,8 +304,6 @@ document.addEventListener('DOMContentLoaded', function () {
         tanggalMulai.addEventListener('change', function () {
             if (tanggalSelesai) {
                 tanggalSelesai.min = this.value;
-
-                // Reset tanggal selesai jika lebih kecil dari tanggal mulai
                 if (tanggalSelesai.value && tanggalSelesai.value < this.value) {
                     tanggalSelesai.value = this.value;
                 }

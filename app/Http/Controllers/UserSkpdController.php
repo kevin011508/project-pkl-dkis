@@ -6,22 +6,34 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\UserSkpd;
+use App\Models\UserGroup;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserSkpdController extends Controller
 {
-    public function index()
-    {
-        $users = UserSkpd::whereNotNull('username')
-        ->orderBy('id', 'asc')
+   public function index()
+{
+    $users = \DB::table('skpd as u')
+        ->leftJoin('skpd as s', 'u.skpd', '=', 's.id')
+        ->whereNotNull('u.username')
+        ->where('u.username', '!=', '')
+        ->select(
+            'u.id',
+            'u.username',
+            'u.user_group',
+            'u.skpd',
+            's.uraian as nama_skpd'
+        )
+        ->orderBy('u.id', 'asc')
         ->paginate(10);
+
     return view('user-skpd.index', compact('users'));
-    }
+}
 
     public function create()
     {
-        $userGroups = ['Admin Setda', 'Operator', 'Administrator', 'Viewer', 'Guest'];
+        $userGroups = UserGroup::orderBy('name')->pluck('name'); // ✅ dari database
         $skpdList = DB::table('skpd')
             ->where('status_aktif', '1')
             ->orderBy('uraian')
@@ -63,7 +75,7 @@ class UserSkpdController extends Controller
     public function edit($id)
     {
         $user = UserSkpd::findOrFail($id);
-        $userGroups = ['Admin Setda', 'Operator', 'Administrator', 'Viewer', 'Guest'];
+        $userGroups = UserGroup::orderBy('name')->pluck('name'); // ✅ dari database
         $skpdList = DB::table('skpd')
             ->where('status_aktif', '1')
             ->orderBy('uraian')

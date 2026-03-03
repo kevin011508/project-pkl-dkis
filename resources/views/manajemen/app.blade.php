@@ -8,7 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">   
+    <!-- ✅ DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
     <style>
         :root {
             --primary-color: #3943ae;
@@ -436,7 +439,7 @@
 <nav id="navbar" class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">ISUN</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">    
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="d-flex align-items-center ms-auto">
@@ -474,27 +477,49 @@
     <div id="sidebar" class="sidebar">
         <h5 class="text-center px-3 mb-2">Menu Utama</h5>
 
+        @php $permissions = session('permissions', []) @endphp
+
         {{-- Dashboard --}}
         <a href="{{ route('manajemen.dashboard') }}"
            class="{{ request()->routeIs('manajemen.dashboard') ? 'active' : '' }}">
             <i class="fas fa-tachometer-alt"></i> Dashboard
         </a>
 
-        {{-- ✅ Agenda: aktif HANYA di halaman agenda (bukan trash) --}}
+        {{-- Agenda --}}
+        @if(auth()->user()->role == 'superadmin' || (isset($permissions['agenda']) && in_array('lihat', $permissions['agenda'])))
         <a href="{{ route('agenda.index') }}"
            class="{{ request()->routeIs('agenda.index') || request()->routeIs('agenda.create') || request()->routeIs('agenda.edit') || request()->routeIs('agenda.show') ? 'active' : '' }}">
             <i class="fas fa-calendar-day"></i> Agenda
         </a>
+        @endif
 
-        {{-- ✅ Trash: aktif HANYA di halaman trash --}}
+        {{-- Trash --}}
+        @if(auth()->user()->role == 'superadmin' || (isset($permissions['agenda']) && in_array('hapus', $permissions['agenda'])))
         <a href="{{ route('agenda.trash') }}"
            class="{{ request()->routeIs('agenda.trash') ? 'active' : '' }}">
             <i class="fas fa-trash-alt"></i> Trash
         </a>
+        @endif
 
+        {{-- MANAJEMEN --}}
+        @php
+            $hasUserMenu = auth()->user()->role == 'superadmin'
+                || (isset($permissions['user_skpd']) && count($permissions['user_skpd']) > 0)
+                || (isset($permissions['user_non_skpd']) && count($permissions['user_non_skpd']) > 0)
+                || (isset($permissions['user_group']) && count($permissions['user_group']) > 0)
+                || (isset($permissions['user_permission']) && count($permissions['user_permission']) > 0);
+
+            $hasOrganisasiMenu = auth()->user()->role == 'superadmin'
+                || (isset($permissions['skpd']) && count($permissions['skpd']) > 0)
+                || (isset($permissions['non_skpd']) && count($permissions['non_skpd']) > 0);
+        @endphp
+
+        @if($hasUserMenu || $hasOrganisasiMenu || auth()->user()->role == 'superadmin')
         <li class="menu-title">MANAJEMEN</li>
+        @endif
 
-        {{-- Dropdown User --}}
+        {{-- User Dropdown --}}
+        @if($hasUserMenu)
         <li class="sidebar-dropdown {{ request()->is('manajemen/user*') ? 'open' : '' }}">
             <a href="#">
                 <span>
@@ -503,18 +528,31 @@
                 </span>
             </a>
             <ul class="dropdown-menu-custom">
+                @if(auth()->user()->role == 'superadmin' || (isset($permissions['user_skpd']) && in_array('lihat', $permissions['user_skpd'])))
                 <li><a href="{{ url('manajemen/user-skpd') }}"
                        class="{{ request()->is('manajemen/user-skpd*') ? 'active' : '' }}">User SKPD</a></li>
+                @endif
+
+                @if(auth()->user()->role == 'superadmin' || (isset($permissions['user_non_skpd']) && in_array('lihat', $permissions['user_non_skpd'])))
                 <li><a href="{{ url('manajemen/user-non-skpd') }}"
                        class="{{ request()->is('manajemen/user-non-skpd*') ? 'active' : '' }}">User Non SKPD</a></li>
+                @endif
+
+                @if(auth()->user()->role == 'superadmin' || (isset($permissions['user_group']) && in_array('lihat', $permissions['user_group'])))
                 <li><a href="{{ url('manajemen/user-groups') }}"
                        class="{{ request()->is('manajemen/user-groups*') ? 'active' : '' }}">User Group</a></li>
+                @endif
+
+                @if(auth()->user()->role == 'superadmin' || (isset($permissions['user_permission']) && in_array('lihat', $permissions['user_permission'])))
                 <li><a href="{{ url('manajemen/user-permission') }}"
                        class="{{ request()->is('manajemen/user-permission*') ? 'active' : '' }}">User Permission</a></li>
+                @endif
             </ul>
         </li>
+        @endif
 
-        {{-- Dropdown Organisasi --}}
+        {{-- Organisasi Dropdown --}}
+        @if($hasOrganisasiMenu)
         <li class="sidebar-dropdown {{ request()->is('manajemen/skpd*') || request()->is('manajemen/non-skpd*') ? 'open' : '' }}">
             <a href="#">
                 <span>
@@ -523,20 +561,28 @@
                 </span>
             </a>
             <ul class="dropdown-menu-custom">
+                @if(auth()->user()->role == 'superadmin' || (isset($permissions['skpd']) && in_array('lihat', $permissions['skpd'])))
                 <li><a href="{{ url('manajemen/skpd') }}"
                        class="{{ request()->is('manajemen/skpd*') ? 'active' : '' }}">SKPD</a></li>
+                @endif
+
+                @if(auth()->user()->role == 'superadmin' || (isset($permissions['non_skpd']) && in_array('lihat', $permissions['non_skpd'])))
                 <li><a href="{{ url('manajemen/non-skpd') }}"
                        class="{{ request()->is('manajemen/non-skpd*') ? 'active' : '' }}">Non SKPD</a></li>
+                @endif
             </ul>
         </li>
+        @endif
 
         {{-- Pengaturan --}}
+        @if(auth()->user()->role == 'superadmin' || (isset($permissions['pengaturan']) && in_array('edit', $permissions['pengaturan'])))
         <li>
             <a href="/manajemen/pengaturan"
                class="{{ request()->is('manajemen/pengaturan*') ? 'active' : '' }}">
                 <i class="bi bi-gear"></i> Pengaturan
             </a>
         </li>
+        @endif
 
         <div class="mt-2 px-3">
             <a href="{{ route('display') }}" class="btn-display {{ request()->routeIs('display.*') ? 'active' : '' }}">
@@ -548,18 +594,17 @@
     {{-- Main Content --}}
     <div class="main-content" id="mainContent">
 
-        {{-- Flash Messages --}}
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>   
             </div>
         @endif
 
         @if(session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>   
             </div>
         @endif
 
@@ -574,21 +619,25 @@
 </footer>
 
 <!-- Bootstrap 5 JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>    
+<!-- ✅ jQuery — wajib sebelum DataTables -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<!-- ✅ DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
         const sidebar = document.getElementById('sidebar');
 
-        // Mobile: tutup sidebar kalau klik di luar
         document.addEventListener('click', function (event) {
             const isClickInsideSidebar = sidebar.contains(event.target);
-            if (window.innerWidth <= 768 && !isClickInsideSidebar && sidebar.classList.contains('show')) {
+            if (window.innerWidth <= 768 && !isClickInsideSidebar && sidebar.classList.contains('show')) {     
                 sidebar.classList.remove('show');
             }
         });
 
-        // Mobile: tutup sidebar setelah klik link
         document.querySelectorAll('.sidebar a').forEach(link => {
             link.addEventListener('click', function () {
                 if (window.innerWidth <= 768) {
@@ -597,14 +646,12 @@
             });
         });
 
-        // Auto close alert setelah 5 detik
         setTimeout(function () {
             document.querySelectorAll('.alert').forEach(alert => {
                 new bootstrap.Alert(alert).close();
             });
         }, 5000);
 
-        // Sidebar dropdown toggle
         document.querySelectorAll('.sidebar-dropdown > a').forEach(function (menu) {
             menu.addEventListener('click', function (e) {
                 e.preventDefault();

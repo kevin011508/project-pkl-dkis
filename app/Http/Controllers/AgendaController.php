@@ -32,11 +32,16 @@ class AgendaController extends Controller
         return 'belum';
     }
 
+
+    /**
+     * List agenda
+     */
     public function index(Request $request)
     {
         $search = $request->input('search');
         $perPage = $request->input('per_page', 10);
 
+        // Update status otomatis
         Agenda::whereIn('status', ['belum', 'berjalan'])->each(function ($agenda) {
             $newStatus = $this->getStatusAgenda(
                 $agenda->tanggal_awal,
@@ -62,17 +67,19 @@ class AgendaController extends Controller
         return view('agenda', compact('agendas', 'totalAgendas', 'search', 'perPage'));
     }
 
+
+    /**
+     * Form create
+     */
     public function create()
     {
         return view('layouts.create');
     }
 
-    public function edit($id)
-    {
-        $agenda = Agenda::findOrFail($id);
-        return view('layouts.edit', compact('agenda'));
-    }
 
+    /**
+     * Simpan agenda
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -89,17 +96,22 @@ class AgendaController extends Controller
             'lampiran'      => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
         ]);
 
+        // Upload file
         if ($request->hasFile('lampiran')) {
-            $validated['berkas'] = $request->file('lampiran')->store('lampiran_agenda', 'public');
-            unset($validated['lampiran']); // kolom di DB namanya 'berkas'
+            $validated['berkas'] = $request->file('lampiran')
+                ->store('lampiran_agenda', 'public');
+
+            unset($validated['lampiran']);
         }
 
+        // Status
         $validated['status'] = $this->getStatusAgenda(
             $validated['tanggal_awal'],
             $validated['tanggal_akhir'] ?? null
         );
 
-        $validated['created_by'] = Auth::user()->id; // ✅ fix
+        // Created by
+        $validated['created_by'] = Auth::id();
 
         Agenda::create($validated);
 
@@ -107,6 +119,30 @@ class AgendaController extends Controller
             ->with('success', 'Agenda berhasil ditambahkan');
     }
 
+
+    /**
+     * Detail agenda
+     */
+    public function show($id)
+    {
+        $agenda = Agenda::findOrFail($id);
+        return view('layouts.show', compact('agenda'));
+    }
+
+
+    /**
+     * Form edit
+     */
+    public function edit($id)
+    {
+        $agenda = Agenda::findOrFail($id);
+        return view('layouts.edit', compact('agenda'));
+    }
+
+
+    /**
+     * Update agenda
+     */
     public function update(Request $request, $id)
     {
         $agenda = Agenda::findOrFail($id);
@@ -129,7 +165,7 @@ class AgendaController extends Controller
             $validated['tanggal_akhir'] ?? null
         );
 
-        $validated['updated_by'] = Auth::user()->id; // ✅ fix
+        $validated['updated_by'] = Auth::id();
 
         $agenda->update($validated);
 
@@ -137,11 +173,15 @@ class AgendaController extends Controller
             ->with('success', 'Agenda berhasil diupdate');
     }
 
+
+    /**
+     * Soft delete
+     */
     public function destroy($id)
     {
         $agenda = Agenda::findOrFail($id);
 
-        $agenda->deleted_by = Auth::user()->id; // ✅ fix
+        $agenda->deleted_by = Auth::id();
         $agenda->save();
 
         $agenda->delete();
@@ -150,24 +190,36 @@ class AgendaController extends Controller
             ->with('success', 'Agenda berhasil dihapus');
     }
 
+
+    /**
+     * Halaman trash
+     */
     public function trash()
     {
         $agendas = Agenda::onlyTrashed()
-            ->with('deletedByUser')
             ->paginate(10);
 
         return view('agenda.trash', compact('agendas'));
     }
 
+
+    /**
+     * Restore dari trash
+     */
     public function restore($id)
     {
         $agenda = Agenda::withTrashed()->findOrFail($id);
+
         $agenda->restore();
 
         return redirect()->route('agenda.trash')
             ->with('success', 'Agenda berhasil direstore');
     }
 
+
+    /**
+     * Force delete satu
+     */
     public function forceDelete($id)
     {
         $agenda = Agenda::withTrashed()->findOrFail($id);
@@ -182,9 +234,24 @@ class AgendaController extends Controller
             ->with('success', 'Agenda dihapus permanen');
     }
 
-    public function show($id)
+
+    /**
+     * Force delete semua
+     */
+    public function forceDeleteAll()
     {
-        $agenda = Agenda::findOrFail($id);
-        return view('layouts.show', compact('agenda'));
+        $agendas = Agenda::onlyTrashed()->get();
+
+        foreach ($agendas as $agenda) {
+
+            if ($agenda->berkas) {
+                Storage::disk('public')->delete($agenda->berkas);
+            }
+
+            $agenda->forceDelete();
+        }
+
+        return redirect()->route('agenda.trash')
+            ->with('success', 'Semua agenda berhasil dihapus permanen');
     }
 }

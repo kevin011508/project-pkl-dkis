@@ -1,5 +1,4 @@
 <?php
-// app/Models/UserNonSkpd.php
 
 namespace App\Models;
 
@@ -10,20 +9,35 @@ class UserNonSkpd extends Model
 {
     use HasFactory;
 
+    // ✅ Tabel non_skpd menyimpan SEKALIGUS data organisasi + data user login
     protected $table = 'non_skpd';
 
     protected $fillable = [
+        'nama',
+        'alias',
         'username',
         'password',
         'pin',
         'user_group',
-        'non_skpd',
         'terkunci',
     ];
 
-    // ✅ Cast kolom tanggal supaya tidak null error
+    protected $hidden = [
+        'password',
+        'pin',
+    ];
+
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'terkunci'   => 'integer',
     ];
+
+    /**
+     * Ambil data UserGroup berdasarkan nama group
+     */
+    public function userGroup()
+    {
+        return $this->belongsTo(UserGroup::class, 'user_group', 'name');
+    }
 }

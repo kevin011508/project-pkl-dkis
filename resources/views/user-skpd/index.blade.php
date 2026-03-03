@@ -127,7 +127,7 @@
                     <td class="align-middle">
                         <span class="badge bg-info text-dark">{{ $user->user_group }}</span>
                     </td>
-                    <td class="align-middle">{{ $user->skpd }}</td>
+                    <td class="align-middle">{{ $user->nama_skpd ?? '-' }}</td>
                         <a href="{{ url('/manajemen/user-skpd/' . $user->id) }}" class="text-decoration-none">
                             {{-- <span class="badge bg-primary me-1 p-2" style="cursor: pointer;">
                                 <i class="bi bi-eye text-white"></i>

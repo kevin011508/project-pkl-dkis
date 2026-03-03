@@ -1,7 +1,6 @@
 @php
     $layout = auth()->user()->role === 'superadmin' ? 'manajemen.app' : 'layouts.app';
 @endphp
-
 @extends($layout)
 
 @section('title', 'Dashboard - ISUN')

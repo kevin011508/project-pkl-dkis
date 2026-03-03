@@ -6,6 +6,10 @@
 @section('title', 'Edit Agenda - ISUN')
 
 @section('content')
+
+{{-- Cek permission edit, kalau tidak punya redirect dengan pesan error --}}
+@canDo('agenda', 'edit')
+
 <div class="container-fluid">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3 pt-3">
@@ -253,9 +257,12 @@
                         <i class="bi bi-x-circle me-2"></i> Batal
                     </a>
                     <div>
-                        <button type="button" class="btn btn-outline-danger me-2 px-4" onclick="confirmDelete()">
-                            <i class="bi bi-trash me-2"></i> Hapus
-                        </button>
+                        {{-- Tombol Hapus hanya muncul jika punya permission hapus --}}
+                        @canDo('agenda', 'hapus')
+                            <button type="button" class="btn btn-outline-danger me-2 px-4" onclick="confirmDelete()">
+                                <i class="bi bi-trash me-2"></i> Hapus
+                            </button>
+                        @endCanDo
                         <button type="submit" class="btn btn-primary px-4">
                             <i class="bi bi-check-circle me-2"></i> Simpan Perubahan
                         </button>
@@ -267,14 +274,25 @@
 </div>
 
 <!-- Form Delete (tersembunyi) -->
-<form id="delete-form" action="{{ route('agenda.destroy', $agenda->id) }}" method="POST" class="d-none">
-    @csrf
-    @method('DELETE')
-</form>
+@canDo('agenda', 'hapus')
+    <form id="delete-form" action="{{ route('agenda.destroy', $agenda->id) }}" method="POST" class="d-none">
+        @csrf
+        @method('DELETE')
+    </form>
+@endCanDo
+
+@else
+    {{-- Tampil pesan jika tidak punya akses edit --}}
+    <div class="container-fluid px-4 py-3">
+        <div class="alert alert-danger">
+            <i class="bi bi-shield-x me-2"></i> Anda tidak memiliki izin untuk mengedit agenda.
+            <a href="{{ route('agenda.index') }}" class="alert-link ms-2">Kembali ke Agenda</a>
+        </div>
+    </div>
+@endCanDo
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Set minimal tanggal mulai (tidak bisa kurang dari hari ini)
     const today = new Date().toISOString().slice(0, 16);
     const tanggalMulaiInput = document.getElementById('tanggal_mulai');
     
@@ -282,13 +300,10 @@ document.addEventListener('DOMContentLoaded', function() {
         tanggalMulaiInput.min = today;
     }
     
-    // Jika tanggal selesai diisi, set minimal = tanggal mulai
     const tanggalSelesaiInput = document.getElementById('tanggal_selesai');
     if (tanggalSelesaiInput && tanggalMulaiInput) {
         tanggalMulaiInput.addEventListener('change', function() {
             tanggalSelesaiInput.min = this.value;
-            
-            // Jika tanggal selesai lebih kecil dari tanggal mulai, reset
             if (tanggalSelesaiInput.value && tanggalSelesaiInput.value < this.value) {
                 tanggalSelesaiInput.value = this.value;
             }

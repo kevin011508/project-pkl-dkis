@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\UserNonSkpd;
+use App\Models\UserGroup;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,7 +19,7 @@ class UserNonSkpdController extends Controller
 
     public function create()
     {
-        $userGroups = ['Operator', 'Admin', 'Viewer', 'Guest'];
+        $userGroups = UserGroup::orderBy('name')->pluck('name'); // ✅ dari database
         // Hanya tampilkan organisasi yang belum punya username
         $nonSkpdList = UserNonSkpd::whereNull('username')->orderBy('nama')->get();
         return view('user-non-skpd.create', compact('userGroups', 'nonSkpdList'));
@@ -31,7 +32,7 @@ class UserNonSkpdController extends Controller
             'password'   => 'required|string|min:6',
             'pin'        => 'required|max:10',
             'user_group' => 'required|string',
-            'non_skpd'   => 'required|exists:non_skpd,id', // ✅ non_skpd berisi id organisasi
+            'non_skpd'   => 'required|exists:non_skpd,id',
             'terkunci'   => 'required|in:0,1',
         ], [
             'username.required'   => 'Username wajib diisi.',
@@ -45,7 +46,7 @@ class UserNonSkpdController extends Controller
             'terkunci.required'   => 'Status terkunci wajib dipilih.',
         ]);
 
-        // ✅ Update baris organisasi yang dipilih dengan data user
+        // Update baris organisasi yang dipilih dengan data user
         $organisasi = UserNonSkpd::findOrFail($request->non_skpd);
         $organisasi->update([
             'username'   => $request->username,
@@ -68,7 +69,7 @@ class UserNonSkpdController extends Controller
     public function edit($id)
     {
         $user = UserNonSkpd::findOrFail($id);
-        $userGroups = ['Operator', 'Admin', 'Viewer', 'Guest'];
+        $userGroups = UserGroup::orderBy('name')->pluck('name'); // ✅ dari database
         $nonSkpdList = DB::table('non_skpd')->orderBy('nama')->get();
         return view('user-non-skpd.edit', compact('user', 'userGroups', 'nonSkpdList'));
     }
@@ -111,7 +112,7 @@ class UserNonSkpdController extends Controller
     {
         $user = UserNonSkpd::findOrFail($id);
 
-        // ✅ Reset kolom user saja, baris organisasi tetap ada
+        // Reset kolom user saja, baris organisasi tetap ada
         $user->update([
             'username'   => null,
             'password'   => null,

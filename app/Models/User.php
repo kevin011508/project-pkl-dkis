@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,13 +10,8 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = ['name', 'username', 'password', 'role'];
-    protected $hidden = ['password'];
+    protected $hidden   = ['password'];
 
     public function getAuthIdentifierName()
     {
@@ -25,18 +19,26 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Cek apakah user adalah Non SKPD
      */
+    public function isNonSkpd(): bool
+    {
+        return $this->role === 'non_skpd';
+    }
 
-    // protected function casts(): array
-    // {
-    //     return [
-    //         'email_verified_at' => 'datetime',
-    //         'password' => 'hashed',
-    //     ];
-    // }
+    /**
+     * Cek apakah user adalah superadmin
+     */
+    public function isSuperadmin(): bool
+    {
+        return $this->role === 'superadmin';
+    }
 
-    
+    /**
+     * Ambil data non_skpd jika role = non_skpd
+     */
+    public function nonSkpdData()
+    {
+        return $this->hasOne(UserNonSkpd::class, 'username', 'username');
+    }
 }

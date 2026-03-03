@@ -1,9 +1,12 @@
 {{-- resources/views/user-permission/index.blade.php --}}
+
 @extends('manajemen.app')
 
 @section('title', 'User Permission')
 
 @push('styles')
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
 <style>
     .content-section {
         background-color: white;
@@ -28,17 +31,6 @@
     .table td {
         vertical-align: middle;
     }
-    .entries-selector {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .search-box {
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
-        padding: 8px 15px;
-        width: 250px;
-    }
     .btn-tambah {
         background-color: #0d6efd;
         color: white;
@@ -47,29 +39,11 @@
         border-radius: 6px;
         font-weight: 500;
         transition: all 0.3s;
+        text-decoration: none;
     }
     .btn-tambah:hover {
         background-color: #0b5ed7;
         color: white;
-    }
-    .icon-link {
-        color: #6c757d;
-        font-size: 18px;
-        margin: 0 5px;
-        text-decoration: none;
-    }
-    .icon-link:hover {
-        color: #0d6efd;
-    }
-    .pagination {
-        margin-bottom: 0;
-    }
-    .page-item.active .page-link {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-    .page-link {
-        color: #0d6efd;
     }
     .badge-controller {
         background-color: #e9ecef;
@@ -87,210 +61,140 @@
         font-weight: 500;
         font-size: 13px;
     }
-    .toggle-checkbox {
-        width: 50px;
-        height: 24px;
-        background-color: #dc3545;
-        border-radius: 30px;
-        position: relative;
-        cursor: pointer;
-        transition: all 0.3s;
-        display: inline-block;
+    #tabelPermission_wrapper .dataTables_length label,
+    #tabelPermission_wrapper .dataTables_filter label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #6c757d;
     }
-    .toggle-checkbox.active {
-        background-color: #198754;
+    #tabelPermission_wrapper .dataTables_filter input {
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 6px 12px;
+        width: 250px;
     }
-    .toggle-checkbox .toggle-circle {
-        width: 20px;
-        height: 20px;
-        background-color: white;
-        border-radius: 50%;
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        transition: all 0.3s;
+    #tabelPermission_wrapper .dataTables_length select {
+        width: 70px;
+        padding: 5px 8px;
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
     }
-    .toggle-checkbox.active .toggle-circle {
-        left: 28px;
+    #tabelPermission_wrapper .dataTables_info,
+    #tabelPermission_wrapper .dataTables_paginate {
+        margin-top: 14px;
+        font-size: 13px;
     }
-    .info-icon {
-        color: #17a2b8;
-        font-size: 18px;
-        cursor: help;
+    #tabelPermission_wrapper .paginate_button.current,
+    #tabelPermission_wrapper .paginate_button.current:hover {
+        background: #0d6efd !important;
+        color: white !important;
+        border-color: #0d6efd !important;
+        border-radius: 5px;
+    }
+    #tabelPermission_wrapper .paginate_button:hover {
+        background: #e9ecef !important;
+        color: #333 !important;
+        border-color: #dee2e6 !important;
+        border-radius: 5px;
     }
 </style>
 @endpush
 
 @section('content')
 <div class="content-section">
-    {{-- Header --}}
+
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>User Permission</h1>
-         <a href="{{ url('/manajemen/user-permission/create') }}" class="btn-tambah">
+        <a href="{{ url('/manajemen/user-permission/create') }}" class="btn-tambah">
             <i class="bi bi-plus-circle me-2"></i>Tambahkan
         </a>
     </div>
 
-    {{-- Filter & Search --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="d-flex align-items-center gap-3">
-            <span class="text-muted">Tampilkan:</span>
-            <select class="form-select form-select-sm" style="width: 80px;" id="entriesPerPage">
-                <option selected>10</option>
-                <option>25</option>
-                <option>50</option>
-                <option>100</option>
-            </select>
-            <span class="text-muted">entri</span>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-            <span class="text-muted">Cari:</span>
-            <input type="text" class="search-box" placeholder="Cari controller atau action..." id="searchInput">
-        </div>
-    </div>
-
-    {{-- Tabel --}}
     <div class="table-responsive">
-        <table class="table table-bordered table-hover">
+        <table id="tabelPermission" class="table table-bordered table-hover w-100">
             <thead class="table-light">
                 <tr>
                     <th width="5%">No</th>
-                    <th width="20%">Controller</th>
-                    <th width="15%">Action</th>
-                    <th width="40%">Info</th>
-                    <th width="20%">Aksi</th>
+                    <th>Controller</th>
+                    <th>Action</th>
+                    <th>Info</th>
+                    <th width="15%" class="text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-                @forelse($permissions as $permission)
-                <tr>
-                    <td class="text-center">{{ $loop->iteration }}</td>
-                    <td class="text-center">
-                        <span class="badge-controller">{{ $permission->controller }}</span>
-                    </td>
-                    <td class="text-center">
-                        <span class="badge-action">{{ $permission->action }}</span>
-                    </td>
-                    <td>
-                        @if($permission->info)
-                          
-                        <small>{{ Str::limit($permission->info, 50) }}</small>
-                        @else
-                            <span class="text-muted fst-italic">-</span>
-                        @endif
-                    </td>
-                    <td class="text-center">
-            
-                      
-                        <a href="{{ url('/manajemen/user-permission/' . $permission->id . '/edit') }}" 
-                           class="btn btn-warning btn-sm" title="Edit">
-                             <i class="bi bi-pencil-fill"></i>
-                        </a>
-                        
-                    
-                        <a href="#" class="btn btn-danger btn-sm" title="Hapus" 
-                           onclick="event.preventDefault(); if(confirm('Hapus permission {{ $permission->controller }} - {{ $permission->action }}?')) document.getElementById('delete-form-{{ $permission->id }}').submit()">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                        
-                    
-                        <form id="delete-form-{{ $permission->id }}" 
-                              action="{{ url('/manajemen/user-permission/' . $permission->id) }}" 
-                              method="POST" class="d-none">
-                            @csrf
-                            @method('DELETE')
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" class="text-center py-5">
-                        <i class="bi bi-shield-lock fs-1 d-block mb-3" style="color: #dee2e6;"></i>
-                        <h5 style="color: #6c757d;">Belum ada data permission</h5>
-                        <p style="color: #adb5bd;">Klik tombol "Tambah Permission" untuk menambah data</p>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 
-    {{-- Footer dengan Pagination --}}
-    <div class="d-flex justify-content-between align-items-center mt-4">
-        <span class="text-muted">
-            Menampilkan {{ $permissions->firstItem() ?? 0 }} sampai {{ $permissions->lastItem() ?? 0 }} dari {{ $permissions->total() }} entri
-        </span>
-        <nav>
-            <ul class="pagination pagination-sm mb-0">
-                <li class="page-item {{ $permissions->onFirstPage() ? 'disabled' : '' }}">
-                    <a class="page-link" href="{{ $permissions->previousPageUrl() }}">Sebelumnya</a>
-                </li>
-                @for($i = 1; $i <= $permissions->lastPage(); $i++)
-                    <li class="page-item {{ $permissions->currentPage() == $i ? 'active' : '' }}">
-                        <a class="page-link" href="{{ $permissions->url($i) }}">{{ $i }}</a>
-                    </li>
-                @endfor
-                <li class="page-item {{ $permissions->hasMorePages() ? '' : 'disabled' }}">
-                    <a class="page-link" href="{{ $permissions->nextPageUrl() }}">Selanjutnya</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
 </div>
+@endsection
 
 @push('scripts')
-<script>
-    // Initialize tooltips
-    document.addEventListener('DOMContentLoaded', function() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-    });
+{{-- 
+    PENTING: Jangan load jQuery lagi di sini kalau layout manajemen.app sudah include jQuery!
+    Kalau layout belum ada jQuery, baru uncomment baris di bawah ini:
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+--}}
 
-    // Toggle Status Function
-    function toggleStatus(id) {
-        fetch('{{ url("/manajemen/user-permission/toggle") }}/' + id, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const toggle = document.getElementById('toggle-' + id);
-                if (data.status) {
-                    toggle.classList.add('active');
-                } else {
-                    toggle.classList.remove('active');
-                }
-            }
-        });
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+$(document).ready(function () {
+
+    // Cek apakah jQuery sudah ada
+    if (typeof $.fn.DataTable === 'undefined') {
+        console.error('DataTables belum termuat!');
+        return;
     }
 
-    // Search functionality
-    document.getElementById('searchInput')?.addEventListener('keyup', function() {
-        let searchValue = this.value.toLowerCase();
-        let tableRows = document.querySelectorAll('tbody tr');
-        
-        tableRows.forEach(row => {
-            let controller = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
-            let action = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
-            let info = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() || '';
-            
-            row.style.display = (controller.includes(searchValue) || 
-                                 action.includes(searchValue) || 
-                                 info.includes(searchValue)) ? '' : 'none';
-        });
+    $('#tabelPermission').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ url("/manajemen/user-permission/data") }}',
+            type: 'GET',
+            error: function (xhr, error, thrown) {
+                console.error('AJAX Error:', xhr.status, xhr.responseText);
+                alert('Gagal memuat data. Status: ' + xhr.status + '. Cek console untuk detail.');
+            }
+        },
+        columns: [
+            { data: 0, orderable: false, className: 'text-center' },
+            { data: 1, className: 'text-center' },
+            { data: 2, className: 'text-center' },
+            { data: 3 },
+            { data: 4, orderable: false, className: 'text-center' },
+        ],
+        language: {
+            search:           "Cari:",
+            searchPlaceholder: "Cari controller atau action...",
+            lengthMenu:       "Tampilkan _MENU_ entri",
+            info:             "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+            infoEmpty:        "Tidak ada data",
+            infoFiltered:     "(difilter dari _MAX_ total entri)",
+            paginate: {
+                first:    "Pertama",
+                last:     "Terakhir",
+                next:     "Selanjutnya",
+                previous: "Sebelumnya",
+            },
+            processing:  "Memuat data...",
+            emptyTable:  "Belum ada data permission",
+            zeroRecords: "Data tidak ditemukan",
+        },
+        order: [[1, 'asc']],
+        pageLength: 10,
     });
 
-    // Entries per page
-    document.getElementById('entriesPerPage')?.addEventListener('change', function() {
-        let perPage = this.value;
-        window.location.href = '{{ url("/manajemen/user-permission") }}?per_page=' + perPage;
-    });
+});
 </script>
 @endpush
-@endsection

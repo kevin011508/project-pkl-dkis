@@ -6,7 +6,7 @@
     <title>@yield('title', 'ISUN')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">   
     <style>
         :root {
             --primary-color: #3943ae;
@@ -16,44 +16,84 @@
             --border-radius: 10px;
             --box-shadow: 0 4px 6px rgba(42, 42, 44, 0.116);
         }
-        
-        .navbar {
-            background-color: #2741a7;
+
+        html, body {
+            height: 100%;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f2f5;
             color: #333333;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-    
+
+        .wrapper {
+            display: flex;
+            flex: 1;
+            margin-top: 56px;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+            padding-bottom: 60px;
+            min-height: calc(100vh - 56px - 50px);
+            width: calc(100% - 250px);
+            transition: margin-left 0.3s;
+        }
+
+        .site-footer {
+            width: 100%;
+            padding-left: 250px;
+            padding-right: 0;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            background-color: #2741a7;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .site-footer p {
+            color: white;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .navbar {
+            background-color: #2741a7;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1100;
+        }
+
         .navbar-brand {
             font-weight: bold;
             font-size: 1.8rem;
             letter-spacing: 2px;
         }
-        
+
         .sidebar {
-            background-color: var(--primary-color);
-            min-height: 100vh;
-            color: white;
-            padding: 0;
             position: fixed;
-            width: 250px;
-            left: 0;
             top: 56px;
+            left: 0;
+            width: 250px;
+            height: calc(100vh - 56px);
+            background-color: var(--primary-color);
+            color: white;
             z-index: 1000;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-top: 15px;
             transition: all 0.3s;
         }
-        
-        .sidebar-content {
-            padding: 20px 0;
-            height: calc(100vh - 56px);
-            overflow-y: auto;
-        }
-        
+
         .sidebar a {
             color: #ecf0f1;
             text-decoration: none;
@@ -62,70 +102,93 @@
             transition: all 0.3s;
             border-left: 4px solid transparent;
         }
-        
+
         .sidebar a:hover {
             background-color: rgba(255, 255, 255, 0.1);
             border-left: 4px solid var(--secondary-color);
         }
-        
+
         .sidebar i {
             width: 25px;
             margin-right: 10px;
         }
-        
+
         .sidebar .active {
             background-color: rgba(255, 255, 255, 0.15);
             border-left: 4px solid var(--secondary-color);
             font-weight: 500;
         }
-        
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid rgba(235, 6, 6, 0.1);
-            margin-bottom: 10px;
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
         }
-        
-        .sidebar-title {
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+        }
+
+        .sidebar hr {
+            opacity: 0.2;
+        }
+
+        .menu-title {
+            display: block;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.8rem;
             color: white;
-            font-size: 1.2rem;
-            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 15px 20px 8px;
+            list-style: none;
+        }
+
+        .sidebar-dropdown .arrow {
+            float: right;
+            transition: transform 0.3s;
+        }
+
+        .sidebar-dropdown.open .arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu-custom {
+            display: none;
+            list-style: none;
+            padding-left: 0;
             margin: 0;
         }
 
-        .btn-display {
+        .sidebar-dropdown.open .dropdown-menu-custom {
             display: block;
-            border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
-            border-left: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+        }
+
+        .dropdown-menu-custom li a {
+            font-size: 0.95rem;
+            padding-left: 50px;
+        }
+
+        .btn-display {
+            display: flex !important;
+            align-items: center;
+            gap: 10px;
+            color: white !important;
+            background-color: transparent;
+            border: 2px solid white !important;
+            border-left: 2px solid white !important;
             border-radius: 8px;
             padding: 10px 15px !important;
-            color: white !important;
-            text-decoration: none;
-            margin: 10px 15px;
+            font-weight: 500;
+            margin-top: 10px;
             transition: all 0.3s;
         }
 
         .btn-display:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-            border: 1.5px solid white !important;
-            border-left: 1.5px solid white !important;
-            color: white !important;
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            border-left: 2px solid white !important;
         }
 
-        .btn-display.active {
-            background-color: rgba(255, 255, 255, 0.15);
-            border: 1.5px solid white !important;
-            border-left: 1.5px solid white !important;
-        }
-        
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-            padding-bottom: 60px;
-            margin-top: 56px;
-            min-height: calc(100vh - 56px - 50px);
-            transition: margin-left 0.3s;
-        }
-        
         .table-container {
             background-color: white;
             border-radius: var(--border-radius);
@@ -133,7 +196,7 @@
             box-shadow: var(--box-shadow);
             margin-top: 20px;
         }
-        
+
         .table-header {
             display: flex;
             justify-content: space-between;
@@ -142,26 +205,26 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-        
+
         .table-controls {
             display: flex;
             gap: 15px;
             align-items: center;
             flex-wrap: wrap;
         }
-        
+
         .entries-filter {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .entries-filter label {
             margin-bottom: 0;
             font-size: 0.9rem;
             color: #555;
         }
-        
+
         .btn-rekap {
             background-color: var(--success-color);
             color: rgba(0, 0, 0, 0.842);
@@ -170,7 +233,7 @@
             border-radius: var(--border-radius);
             font-weight: 500;
         }
-        
+
         .btn-tambah {
             background-color: var(--secondary-color);
             color: rgba(0, 0, 0, 0.842);
@@ -179,17 +242,17 @@
             border-radius: var(--border-radius);
             font-weight: 500;
         }
-        
+
         .btn-rekap:hover, .btn-tambah:hover {
             opacity: 0.9;
             color: rgb(0, 0, 0);
         }
-        
+
         .table {
             margin-bottom: 0;
             width: 100%;
         }
-        
+
         .table th {
             background-color: #f8f9fa;
             font-weight: 600;
@@ -198,172 +261,146 @@
             vertical-align: middle;
             white-space: nowrap;
         }
-        
+
         .table td {
             vertical-align: middle;
             border-bottom: 1px solid #e9ecef;
         }
-        
+
         .table tbody tr:hover {
             background-color: #f8f9fa;
         }
-        
+
         .btn-action {
             padding: 4px 8px;
             font-size: 0.85rem;
             margin: 2px;
         }
-        
+
         .btn-detail {
             background-color: #17a2b8;
             color: white;
             border: none;
         }
-        
+
         .btn-edit {
             background-color: #ffc107;
             color: #212529;
             border: none;
         }
-        
+
         .btn-hapus {
             background-color: #dc3545;
             color: white;
             border: none;
         }
-        
+
         .pagination-info {
             color: #6c757d;
             font-size: 0.9rem;
             margin-top: 15px;
         }
-        
+
         .search-box {
             max-width: 300px;
         }
-        
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1100;
-        }
-        
+
         .badge-status {
             padding: 5px 10px;
             border-radius: 20px;
             font-weight: 500;
         }
-        
+
         .badge-selesai {
             background-color: #28a745;
             color: white;
         }
-        
+
         .badge-berjalan {
             background-color: #17a2b8;
             color: white;
         }
-        
+
         .badge-belum {
             background-color: #ffc107;
             color: #212529;
         }
 
-        .site-footer {
-            background-color: #2741a7;
-            text-align: center;
-            padding: 15px 0;
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            left: 250px;
-            z-index: 999;
-        }
-
-        .site-footer p {
-            color: white;
-            margin: 0;
-            font-size: 14px;
-        }
-        
         @media (max-width: 992px) {
             .sidebar {
                 width: 70px;
                 overflow: hidden;
             }
-            
+
             .sidebar:hover {
                 width: 250px;
             }
-            
+
             .sidebar a span,
-            .sidebar-header {
+            .menu-title {
                 opacity: 0;
                 transition: opacity 0.3s;
             }
-            
+
             .sidebar:hover a span,
-            .sidebar:hover .sidebar-header {
+            .sidebar:hover .menu-title {
                 opacity: 1;
             }
-            
+
             .main-content {
                 margin-left: 70px;
+                width: calc(100% - 70px);
             }
 
             .site-footer {
-                left: 70px;
-            }
-            
-            .sidebar:hover + .main-content {
-                margin-left: 250px;
+                padding-left: 70px;
             }
         }
-        
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 0;
                 transform: translateX(-100%);
             }
-            
+
             .sidebar.show {
                 width: 250px;
                 transform: translateX(0);
             }
-            
+
             .main-content {
                 margin-left: 0;
+                width: 100%;
             }
 
             .site-footer {
-                left: 0;
+                padding-left: 0;
             }
-            
+
             .table-header {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .table-controls {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .search-box {
                 max-width: 100%;
             }
-            
+
             .entries-filter {
                 justify-content: center;
             }
         }
-        
+
         .mobile-menu-btn {
             display: none;
             margin-right: 10px;
         }
-        
+
         @media (max-width: 768px) {
             .mobile-menu-btn {
                 display: block;
@@ -380,7 +417,7 @@
             <button class="navbar-toggler mobile-menu-btn" type="button" id="sidebarToggle">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <a class="navbar-brand" href="{{ route('agenda.index') }}">ISUN</a>
 
             <div class="ms-auto d-flex align-items-center">
@@ -411,63 +448,146 @@
         </div>
     </nav>
 
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-content">
-            <div class="sidebar-header">
-                <h5 class="sidebar-title">Menu Utama</h5>
-            </div>
+    <!-- Wrapper -->
+    <div class="wrapper">
 
-            {{-- ✅ PERBAIKAN: Dashboard active hanya kalau sedang di halaman tersebut --}}
-            @if(auth()->user()->role == 'superadmin')
-                <a href="{{ route('manajemen.dashboard') }}"
-                   class="{{ request()->routeIs('manajemen.dashboard') ? 'active' : '' }}">
-                    <i class="bi bi-speedometer2"></i><span>Dashboard</span>
-                </a>
-            @else
-                <a href="{{ route('dashboard') }}"
-                   class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <h5 class="text-center px-3 mb-2">Menu Utama</h5>
+
+            @php $permissions = session('permissions', []) @endphp
+
+            {{-- Dashboard --}}
+            <a href="{{ route('dashboard') }}"
+               class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+
+            {{-- Agenda --}}
+            @if(isset($permissions['agenda']) && in_array('lihat', $permissions['agenda']))
+                <a href="{{ route('agenda.index') }}"
+                   class="{{ request()->routeIs('agenda.index') || request()->routeIs('agenda.create') || request()->routeIs('agenda.edit') || request()->routeIs('agenda.show') ? 'active' : '' }}">
+                    <i class="fas fa-calendar-day"></i> Agenda
                 </a>
             @endif
 
-            {{-- ✅ PERBAIKAN: Agenda active hanya kalau sedang di halaman agenda --}}
-            <a href="{{ route('agenda.index') }}"
-               class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">
-                <i class="bi bi-calendar-check"></i> <span>Agenda</span>
-            </a>
+            
 
-            {{-- ✅ PERBAIKAN: Buka Display active hanya kalau sedang di halaman display --}}
-            <a href="{{ route('display') }}"
-               class="btn-display {{ request()->routeIs('display.*') ? 'active' : '' }}">
-                <i class="fas fa-desktop"></i> <span>Buka Display</span>
-            </a>
+            {{-- Cek apakah ada menu User atau Organisasi --}}
+            @php
+                $hasUserMenu = (isset($permissions['user_skpd']) && count($permissions['user_skpd']) > 0)
+                    || (isset($permissions['user_non_skpd']) && count($permissions['user_non_skpd']) > 0)
+                    || (isset($permissions['user_group']) && count($permissions['user_group']) > 0)
+                    || (isset($permissions['user_permission']) && count($permissions['user_permission']) > 0);
+
+                $hasOrganisasiMenu = (isset($permissions['skpd']) && count($permissions['skpd']) > 0)
+                    || (isset($permissions['non_skpd']) && count($permissions['non_skpd']) > 0);
+            @endphp
+
+            @if($hasUserMenu || $hasOrganisasiMenu)
+                <li class="menu-title">MANAJEMEN</li>
+            @endif
+
+            {{-- Dropdown User --}}
+            @if($hasUserMenu)
+                <li class="sidebar-dropdown {{ request()->is('manajemen/user*') ? 'open' : '' }}">
+                    <a href="#">
+                        <span>
+                            <i class="bi bi-people"></i> User
+                            <i class="bi bi-chevron-down arrow"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu-custom">
+                        @if(isset($permissions['user_skpd']) && in_array('lihat', $permissions['user_skpd']))
+                            <li><a href="{{ url('manajemen/user-skpd') }}"
+                                   class="{{ request()->is('manajemen/user-skpd*') ? 'active' : '' }}">User SKPD</a></li>
+                        @endif
+
+                        @if(isset($permissions['user_non_skpd']) && in_array('lihat', $permissions['user_non_skpd']))
+                            <li><a href="{{ url('manajemen/user-non-skpd') }}"
+                                   class="{{ request()->is('manajemen/user-non-skpd*') ? 'active' : '' }}">User Non SKPD</a></li>
+                        @endif
+
+                        @if(isset($permissions['user_group']) && in_array('lihat', $permissions['user_group']))
+                            <li><a href="{{ url('manajemen/user-groups') }}"
+                                   class="{{ request()->is('manajemen/user-groups*') ? 'active' : '' }}">User Group</a></li>
+                        @endif
+
+                        @if(isset($permissions['user_permission']) && in_array('lihat', $permissions['user_permission']))
+                            <li><a href="{{ url('manajemen/user-permission') }}"
+                                   class="{{ request()->is('manajemen/user-permission*') ? 'active' : '' }}">User Permission</a></li>
+                        @endif
+                    </ul>
+                </li>
+            @endif
+
+            {{-- Dropdown Organisasi --}}
+            @if($hasOrganisasiMenu)
+                <li class="sidebar-dropdown {{ request()->is('manajemen/skpd*') || request()->is('manajemen/non-skpd*') ? 'open' : '' }}">
+                    <a href="#">
+                        <span>
+                            <i class="bi bi-people"></i> Organisasi
+                            <i class="bi bi-chevron-down arrow"></i>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu-custom">
+                        @if(isset($permissions['skpd']) && in_array('lihat', $permissions['skpd']))
+                            <li><a href="{{ url('manajemen/skpd') }}"
+                                   class="{{ request()->is('manajemen/skpd*') ? 'active' : '' }}">SKPD</a></li>
+                        @endif
+
+                        @if(isset($permissions['non_skpd']) && in_array('lihat', $permissions['non_skpd']))
+                            <li><a href="{{ url('manajemen/non-skpd') }}"
+                                   class="{{ request()->is('manajemen/non-skpd*') ? 'active' : '' }}">Non SKPD</a></li>
+                        @endif
+                    </ul>
+                </li>
+            @endif
+
+            {{-- Pengaturan --}}
+            @if(isset($permissions['pengaturan']) && in_array('edit', $permissions['pengaturan']))
+                <li>
+                    <a href="/manajemen/pengaturan"
+                       class="{{ request()->is('manajemen/pengaturan*') ? 'active' : '' }}">
+                        <i class="bi bi-gear"></i> Pengaturan
+                    </a>
+                </li>
+            @endif
+
+            {{-- Buka Display --}}
+            <div class="mt-2 px-3">
+                <a href="{{ route('display') }}" class="btn-display {{ request()->routeIs('display.*') ? 'active' : '' }}">
+                    <i class="fas fa-desktop"></i> <span>Buka Display</span>
+                </a>
+            </div>
 
         </div>
+        <!-- END Sidebar -->
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @yield('content')
+
+        </div>
+        <!-- END Main Content -->
+
     </div>
-    <!-- END Sidebar -->
-
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        
-        @yield('content')
-
-    </div>
-    <!-- END Main Content -->
+    <!-- END Wrapper -->
 
     <!-- Footer -->
     <footer class="site-footer">
@@ -476,50 +596,49 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
-            
+
             if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', function() {
+                sidebarToggle.addEventListener('click', function () {
                     sidebar.classList.toggle('show');
                 });
             }
-            
-            document.addEventListener('click', function(event) {
-                const sidebar = document.getElementById('sidebar');
-                const sidebarToggle = document.getElementById('sidebarToggle');
-                
-                if (!sidebar || !sidebarToggle) return;
-                
+
+            document.addEventListener('click', function (event) {
                 const isClickInsideSidebar = sidebar.contains(event.target);
-                const isClickOnToggle = sidebarToggle.contains(event.target);
-                
+                const isClickOnToggle = sidebarToggle ? sidebarToggle.contains(event.target) : false;
                 if (window.innerWidth <= 768 && !isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('show')) {
                     sidebar.classList.remove('show');
                 }
             });
-            
+
             document.querySelectorAll('.sidebar a').forEach(link => {
-                link.addEventListener('click', function() {
+                link.addEventListener('click', function () {
                     if (window.innerWidth <= 768) {
-                        const sidebar = document.getElementById('sidebar');
-                        if (sidebar) {
-                            sidebar.classList.remove('show');
-                        }
+                        sidebar.classList.remove('show');
                     }
                 });
             });
-            
-            setTimeout(function() {
-                const alerts = document.querySelectorAll('.alert');
-                alerts.forEach(alert => {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
+
+            // Dropdown toggle
+            document.querySelectorAll('.sidebar-dropdown > a').forEach(function (menu) {
+                menu.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    this.parentElement.classList.toggle('open');
+                });
+            });
+
+            setTimeout(function () {
+                document.querySelectorAll('.alert').forEach(alert => {
+                    new bootstrap.Alert(alert).close();
                 });
             }, 5000);
+
         });
     </script>
     @stack('scripts')
