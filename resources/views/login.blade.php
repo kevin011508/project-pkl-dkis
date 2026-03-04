@@ -16,30 +16,47 @@
         }
         
         body {
-            background-color: var(--light-bg);
+            background: url('https://source.unsplash.com/1600x900/?office,meeting') no-repeat center center fixed;
+            background-size: cover;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+        }
+        
+        /* Overlay gelap agar kontras dengan teks */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
         }
         
         .login-container {
             width: 100%;
             max-width: 400px;
             padding: 20px;
+            position: relative;
+            z-index: 2;
         }
         
         .login-card {
-            background-color: white;
+            background-color: rgba(255, 255, 255, 0.95);
             border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             animation: fadeIn 0.6s ease-out;
+            backdrop-filter: blur(5px);
         }
         
         .login-header {
-            background-color: #3943ae;
+            background: linear-gradient(135deg, #3943ae, #2c3e50);
             color: white;
             padding: 25px 20px;
             text-align: center;
@@ -64,7 +81,7 @@
         
         .form-label {
             font-weight: 600;
-            color: #444;
+            color: #333;
             margin-bottom: 8px;
         }
         
@@ -86,15 +103,8 @@
             border-right: none;
         }
         
-        .password-toggle {
-            cursor: pointer;
-            border: 1px solid #ddd;
-            border-left: none;
-            background-color: #f8f9fa;
-        }
-        
         .btn-login {
-            background-color: #3943ae;
+            background: linear-gradient(135deg, #3943ae, #2c3e50);
             color: white;
             font-weight: 600;
             padding: 12px;
@@ -106,12 +116,14 @@
         }
         
         .btn-login:hover {
-            background-color: #3943ae;
+            background: linear-gradient(135deg, #2c3e50, #3943ae);
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(57, 67, 174, 0.4);
         }
 
         .alert {
             font-size: 0.9rem;
+            border-radius: 8px;
         }
 
         @keyframes fadeIn {
@@ -173,6 +185,9 @@
                                 <i class="fas fa-lock"></i>
                             </span>
                             <input type="password" name="password" class="form-control" id="password" placeholder="Masukkan password Anda" required>
+                            <span class="input-group-text password-toggle" id="togglePassword" style="cursor: pointer;">
+                                <i class="fas fa-eye"></i>
+                            </span>
                         </div>
                     </div>
                     
