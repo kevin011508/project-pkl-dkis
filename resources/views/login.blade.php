@@ -102,6 +102,25 @@
             border: 1px solid #ddd;
             border-right: none;
         }
+
+        .input-group .form-control {
+            border-left: none;
+        }
+
+        .password-toggle {
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-left: none;
+            background-color: #f8f9fa;
+            color: #666;
+            padding: 0 14px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .password-toggle:hover {
+            background-color: #e9ecef;
+            color: #333;
+        }
         
         .btn-login {
             background: linear-gradient(135deg, #3943ae, #2c3e50);
@@ -119,6 +138,7 @@
             background: linear-gradient(135deg, #2c3e50, #3943ae);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(57, 67, 174, 0.4);
+            color: white;
         }
 
         .alert {
@@ -173,7 +193,16 @@
                             <span class="input-group-text">
                                 <i class="fas fa-user"></i>
                             </span>
-                            <input type="text" name="username" class="form-control" id="username" placeholder="Masukkan username Anda" required>
+                            <input 
+                                type="text" 
+                                name="username" 
+                                class="form-control @error('username') is-invalid @enderror" 
+                                id="username" 
+                                placeholder="Masukkan username Anda" 
+                                value="{{ old('username') }}"
+                                required
+                                autofocus
+                            >
                         </div>
                     </div>
                     
@@ -184,10 +213,18 @@
                             <span class="input-group-text">
                                 <i class="fas fa-lock"></i>
                             </span>
-                            <input type="password" name="password" class="form-control" id="password" placeholder="Masukkan password Anda" required>
-                            <span class="input-group-text password-toggle" id="togglePassword" style="cursor: pointer;">
-                                <i class="fas fa-eye"></i>
-                            </span>
+                            <input 
+                                type="password" 
+                                name="password" 
+                                class="form-control" 
+                                id="password" 
+                                placeholder="Masukkan password Anda" 
+                                required
+                            >
+                            <!-- Tombol toggle show/hide password -->
+                            <button class="password-toggle" type="button" id="togglePassword">
+                                <i class="fas fa-eye" id="toggleIcon"></i>
+                            </button>
                         </div>
                     </div>
                     
@@ -205,10 +242,10 @@
     
     <script>
         // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
+        document.getElementById('togglePassword').addEventListener('click', function () {
             const passwordInput = document.getElementById('password');
-            const icon = this.querySelector('i');
-            
+            const icon = document.getElementById('toggleIcon');
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 icon.classList.remove('fa-eye');

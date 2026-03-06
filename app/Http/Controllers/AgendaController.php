@@ -110,8 +110,8 @@ class AgendaController extends Controller
             $validated['tanggal_akhir'] ?? null
         );
 
-        // Created by
-        $validated['created_by'] = Auth::id();
+        // Created by — pakai getAttribute('id') agar tidak terpengaruh override getAuthIdentifier()
+        $validated['created_by'] = Auth::user()->getAttribute('id');
 
         Agenda::create($validated);
 
@@ -165,7 +165,8 @@ class AgendaController extends Controller
             $validated['tanggal_akhir'] ?? null
         );
 
-        $validated['updated_by'] = Auth::id();
+        // Updated by — pakai getAttribute('id') agar tidak terpengaruh override getAuthIdentifier()
+        $validated['updated_by'] = Auth::user()->getAttribute('id');
 
         $agenda->update($validated);
 
@@ -181,7 +182,8 @@ class AgendaController extends Controller
     {
         $agenda = Agenda::findOrFail($id);
 
-        $agenda->deleted_by = Auth::id();
+        // Deleted by — pakai getAttribute('id') agar tidak terpengaruh override getAuthIdentifier()
+        $agenda->deleted_by = Auth::user()->getAttribute('id');
         $agenda->save();
 
         $agenda->delete();

@@ -18,6 +18,11 @@ class User extends Authenticatable
         return 'username';
     }
 
+    public function getAuthIdentifier()
+    {
+        return $this->username;
+    }
+
     /**
      * Cek apakah user adalah Non SKPD
      */

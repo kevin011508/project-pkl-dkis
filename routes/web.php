@@ -24,7 +24,8 @@ Route::get('/login', [AuthController::class, 'showLogin'])
     ->name('login')
     ->middleware('guest');
 
-Route::post('/', [AuthController::class, 'login'])
+// ✅ DIPERBAIKI: Ganti dari '/' ke '/login'
+Route::post('/login', [AuthController::class, 'login'])
     ->name('login.post')
     ->middleware('guest');
 
@@ -248,7 +249,6 @@ Route::middleware('auth')->group(function () {
                 ->name('user-skpd.store')
                 ->middleware('permission:user_skpd,tambah');
 
-            // ✅ show harus sebelum {id}/edit
             Route::get('/user-skpd/{id}', [UserSkpdController::class, 'show'])
                 ->name('user-skpd.show')
                 ->middleware('permission:user_skpd,lihat');
@@ -282,7 +282,6 @@ Route::middleware('auth')->group(function () {
                 ->name('user-non-skpd.store')
                 ->middleware('permission:user_non_skpd,tambah');
 
-            // ✅ show harus sebelum {id}/edit
             Route::get('/user-non-skpd/{id}', [UserNonSkpdController::class, 'show'])
                 ->name('user-non-skpd.show')
                 ->middleware('permission:user_non_skpd,lihat');
@@ -341,3 +340,11 @@ Route::middleware('auth')->group(function () {
 */
 Route::get('/display', [DisplayController::class, 'index'])
     ->name('display');
+
+    Route::get('/test-auth', function() {
+    return response()->json([
+        'auth' => auth()->check(),
+        'user' => auth()->user(),
+        'session' => session()->all(),
+    ]);
+})->middleware('auth');

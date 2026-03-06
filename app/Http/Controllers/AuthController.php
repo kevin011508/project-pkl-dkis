@@ -16,6 +16,13 @@ class AuthController extends Controller
     // Menampilkan halaman login
     public function showLogin()
     {
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->role === 'superadmin') {
+                return redirect()->route('manajemen.dashboard');
+            }
+            return redirect()->route('dashboard');
+        }
         return view('login');
     }
 
@@ -28,7 +35,7 @@ class AuthController extends Controller
         ]);
 
         // =============================================
-        // 1. Cek apakah username ada di tabel superadmin (users)
+        // 1. Cek superadmin di tabel users
         // =============================================
         $superadmin = User::where('username', $request->username)
                           ->where('role', 'superadmin')
@@ -41,60 +48,84 @@ class AuthController extends Controller
 
             Auth::login($superadmin);
             $request->session()->regenerate();
-            return redirect()->route('manajemen.dashboard');
+            return redirect(route('manajemen.dashboard'));
         }
 
         // =============================================
-        // 2. Cek apakah username ada di tabel skpd (User SKPD)
+        // 2. Cek admin di tabel users (role = admin)
         // =============================================
-        $skpd = UserSkpd::where('username', $request->username)->first();
+        $adminUser = User::where('username', $request->username)
+                         ->where('role', 'admin')
+                         ->first();
 
-        if ($skpd && Hash::check($request->password, $skpd->password)) {
-            // Cek akun terkunci
-            if ($skpd->terkunci == 1) {
+        if ($adminUser && Hash::check($request->password, $adminUser->password)) {
+            if (isset($adminUser->terkunci) && $adminUser->terkunci == 1) {
                 return back()->withErrors(['username' => 'Akun Anda terkunci. Hubungi administrator.']);
             }
 
-            // Ambil permissions dari user_group
             $permissions = [];
-            if ($skpd->user_group) {
-                $group = UserGroup::where('name', $skpd->user_group)->first();
+            $skpdData = UserSkpd::where('username', $request->username)->first();
+            if ($skpdData && $skpdData->user_group) {
+                $group = UserGroup::where('name', $skpdData->user_group)->first();
                 if ($group) {
                     $permissions = json_decode($group->permission, true) ?? [];
                 }
             }
 
-            // Buat atau update user dummy di tabel users dengan role admin
-            $user = User::updateOrCreate(
-                ['username' => $skpd->username],
-                [
-                    'name'     => $skpd->username,
-                    'password' => $skpd->password,
-                    'role'     => 'admin',
-                ]
-            );
-
-            Auth::login($user);
+            Auth::login($adminUser);
             $request->session()->regenerate();
             session(['permissions' => $permissions]);
-
-            return redirect()->route('dashboard');
+            return redirect(route('dashboard'));
         }
 
         // =============================================
-        // 3. Cek apakah username ada di tabel non_skpd (User Non SKPD)
+        // 3. Cek non_skpd di tabel users (role = non_skpd)
+        // =============================================
+        $nonSkpdUser = User::where('username', $request->username)
+                           ->where('role', 'non_skpd')
+                           ->first();
+
+        if ($nonSkpdUser && Hash::check($request->password, $nonSkpdUser->password)) {
+            if (isset($nonSkpdUser->terkunci) && $nonSkpdUser->terkunci == 1) {
+                return back()->withErrors(['username' => 'Akun Anda terkunci. Hubungi administrator.']);
+            }
+
+            $nonSkpd = UserNonSkpd::where('username', $request->username)->first();
+
+            $permissions = [];
+            if ($nonSkpd && $nonSkpd->user_group) {
+                $group = UserGroup::where('name', $nonSkpd->user_group)->first();
+                if ($group) {
+                    $permissions = json_decode($group->permission, true) ?? [];
+                }
+            }
+
+            Auth::login($nonSkpdUser);
+            $request->session()->regenerate();
+
+            session([
+                'non_skpd_id'       => $nonSkpd->id ?? null,
+                'non_skpd_username' => $nonSkpd->username ?? $request->username,
+                'non_skpd_group'    => $nonSkpd->user_group ?? null,
+                'non_skpd_nama'     => $nonSkpd->nama ?? null,
+                'login_type'        => 'non_skpd',
+                'permissions'       => $permissions,
+            ]);
+
+            return redirect(route('dashboard'));
+        }
+
+        // =============================================
+        // 4. Cek PIN untuk non_skpd langsung dari tabel non_skpd
         // =============================================
         $nonSkpd = UserNonSkpd::where('username', $request->username)->first();
 
         if ($nonSkpd) {
-            // Cek akun terkunci
             if ($nonSkpd->terkunci == 1) {
                 return back()->withErrors(['username' => 'Akun Anda terkunci. Hubungi administrator.']);
             }
 
-            // Cek PIN
             if ($nonSkpd->pin == $request->password) {
-                // Ambil permissions dari user_group
                 $permissions = [];
                 if ($nonSkpd->user_group) {
                     $group = UserGroup::where('name', $nonSkpd->user_group)->first();
@@ -103,7 +134,6 @@ class AuthController extends Controller
                     }
                 }
 
-                // Buat atau update user dummy di tabel users dengan role non_skpd
                 $user = User::updateOrCreate(
                     ['username' => $nonSkpd->username],
                     [
@@ -125,12 +155,12 @@ class AuthController extends Controller
                     'permissions'       => $permissions,
                 ]);
 
-                return redirect()->route('dashboard');
+                return redirect(route('dashboard'));
             }
         }
 
         // =============================================
-        // 4. Semua gagal
+        // 5. Semua gagal
         // =============================================
         return back()->withErrors([
             'username' => 'Username atau password/PIN salah.'

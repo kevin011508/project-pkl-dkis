@@ -29,7 +29,7 @@
                             </tr>
                             <tr>
                                 <td class="fw-bold text-dark" style="vertical-align: top;">Uraian</td>
-                                <td class="text-dark">{{ $agenda->uraian ?: '-' }}</td>
+                                <td class="text-dark">{{ $agenda->deskripsi ?: '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="fw-bold text-dark" style="vertical-align: top;">Penyelenggara</td>
@@ -86,7 +86,7 @@
 
                     <!-- Tombol Kembali -->
                     <div class="mt-2">
-                        <a href="{{ route('dashboard') }}" class="btn btn-secondary px-4">
+                        <a href="{{ route('agenda.index') }}" class="btn btn-secondary px-4">
                             Kembali
                         </a>
                     </div>

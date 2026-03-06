@@ -464,7 +464,7 @@
             </a>
 
             {{-- Agenda --}}
-            @if(isset($permissions['agenda']) && in_array('lihat', $permissions['agenda']))
+            @if(auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin' || (isset($permissions['agenda']) && in_array('lihat', $permissions['agenda'])))
                 <a href="{{ route('agenda.index') }}"
                    class="{{ request()->routeIs('agenda.index') || request()->routeIs('agenda.create') || request()->routeIs('agenda.edit') || request()->routeIs('agenda.show') ? 'active' : '' }}">
                     <i class="fas fa-calendar-day"></i> Agenda

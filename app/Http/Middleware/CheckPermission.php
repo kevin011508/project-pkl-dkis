@@ -14,13 +14,18 @@ class CheckPermission
             return $next($request);
         }
 
-        // ✅ Cek dari session dulu
+        // Admin bebas akses semua
+        if ($user->role === 'admin') {
+            return $next($request);
+        }
+
+        // Cek dari session dulu
         $permissions = session('permissions', []);
         if (isset($permissions[$module]) && in_array($action, $permissions[$module])) {
             return $next($request);
         }
 
-        // ✅ Fallback: ambil dari DB kalau session kosong
+        // Fallback: ambil dari DB kalau session kosong
         $userGroup = $this->getUserGroup($user);
         if ($userGroup) {
             $group = \App\Models\UserGroup::where('name', $userGroup)->first();
