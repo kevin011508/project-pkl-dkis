@@ -16,26 +16,13 @@
         }
         
         body {
-            background: url('https://source.unsplash.com/1600x900/?office,meeting') no-repeat center center fixed;
-            background-size: cover;
+            background: #eef0f5;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-        }
-        
-        /* Overlay gelap agar kontras dengan teks */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1;
         }
         
         .login-container {
@@ -47,16 +34,15 @@
         }
         
         .login-card {
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: #ffffff;
             border-radius: 12px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            box-shadow: none;
             overflow: hidden;
             animation: fadeIn 0.6s ease-out;
-            backdrop-filter: blur(5px);
         }
         
         .login-header {
-            background: linear-gradient(135deg, #3943ae, #2c3e50);
+            background: #3943ae;
             color: white;
             padding: 25px 20px;
             text-align: center;
@@ -77,6 +63,7 @@
         
         .login-body {
             padding: 30px 25px;
+            background-color: #ffffff;
         }
         
         .form-label {
@@ -123,7 +110,7 @@
         }
         
         .btn-login {
-            background: linear-gradient(135deg, #3943ae, #2c3e50);
+            background: #3943ae;
             color: white;
             font-weight: 600;
             padding: 12px;
@@ -135,7 +122,7 @@
         }
         
         .btn-login:hover {
-            background: linear-gradient(135deg, #2c3e50, #3943ae);
+            background: #3943ae;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(57, 67, 174, 0.4);
             color: white;
